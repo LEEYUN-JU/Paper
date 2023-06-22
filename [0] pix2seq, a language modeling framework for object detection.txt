@@ -1,0 +1,31 @@
+<논문의 핵심>
+- Object descriptions are expressed us sequence of discrete tokens.
+- Train network to perceive the image and generate the desired sequence.
+- If networks know where and what objects are, we only need to teach it how to read them out.
+
+<지적된 기존 문제>
+- Obejct detection과정이 너무 복잡함
+- transformer 연산량이 상당함
+- EOS token에 의해서 생성이 언제 종료되는지를 결정하지만, 올바르지 못하게 종료되는 경우가 존재한다.
+	1. annotation noise가 포함되는 경우
+	2. uncertatinty in recognizing or localizing some objects
+-> 본 논문에서는 이는 모델이 precision과 recall간의 trade-off 문제를 인지하지 못하기 때문에 발생하는 문제라고 규명
+
+<제시하는 해결 방법>
+- bounding box 정보를 token화 시킴 (y_min, x_min, y_max, x_max, c(class))
+- 기존에 입력 정보에 필요한 부분
+- 모든 token이 동일한 voca를 공유할 수 있도록 하여 연산량을 줄였다
+- likelihood 를 낮춰서 EOS token의 sampling 속도를 낮추는 것
+- 이렇게 제시하는 방법이 "sequence augmentation"임
+- recall을 증가시키는 것이 모델의 robustness를 높이고, noise token으로 학습 가능하도록 target sequence를 변경해 주는 것이 해결 방법의 핵심 내용임
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- BOS token : Begin-of-sequence token
+- EOS token : End-of-sequence token
+- bin : 픽셀 단위(묶음), 해당하는 대상에 대한 묶음? 을 말하는것 같다
+- precision : 내가 T라고 한 것들 중 몇개나 진짜 T인지?
+- recall : 진짜 T중에 몇 개나 정말 T인지?
+- /tilda{x} = 알파벳 위에 ~ 표시는 tilda(틸다, 틸더 .. ) 라고 읽는다
+
+<참고한 블로그>
+https://velog.io/@long8v/Pix2seq
