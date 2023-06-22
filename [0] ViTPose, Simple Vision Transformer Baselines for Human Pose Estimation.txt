@@ -1,0 +1,67 @@
+<논문의 서론>
+- non-hierarchical vision transformers, lightweight decoder for pose estimation.
+- localize human anatomical keypoints
+- encoder only 구조는 여전히 feature를 추출할때 CNN을 활용한다.
+- 좋은 initialization을 위해서 MAE를 활용해 pre-trained 했다
+- 장점 4가지
+	1. 구조가 매우 단순하다.
+	2. 성능이 좋고, feature 차원을 늘리거나 증가 하면서 모델 크기를 조정할 수 있다. (ViT-B, ViT-L, ViT-H)
+	3. 다른 decoder를 붙여서 유연하게 사용 가능하고, 이는 곧 여러 task에 손 쉽게 적용 가능하다는 것을 의미한다
+	4. knowledge 토근을 사용하였기에 transferability이 좋다
+
+<관련 논문>
+- PRTR        : transformer의 encoder와 decoder를 점진적으로 key points를 cascade manner를 통해 정제한다
+- TokenPose : token-based 구조이며, occluded 된 locations key points 추정을 위한 추가 토큰을 사용하였다
+- TransPose  : CNN을 통해서 feature를 뽑고 이를 적용시켰다
+- HRFormer : CNN을 사용하지 않기 위해서 high-resolution 특징을 직접 추출해냈다.
+
+<논문 본론>
+[sturcture simplicity]
+- 구조를 단순하게 하고자 하는것에 초점을 맞추었다
+- heatmaps (w.r.t) 키 포인트를 추정하기 위해서 decoder layer를 추가하였다
+- skip-connection이나 cross-attentions는 decoder layer에 포함되지 않고, 대신에 simple한 deconvolution layer를 predcition layer로 사용하였다
+- 두 개의 light-weight layder를 사용하였다. 하나는 clasific decoder이고, 하나는 히트맵 추출을 위한, 3*3 conv레이어를 활용한, bilinear interpolation이 가능한 4배 upsampling된 피쳐 맵을 사용하였다.
+- 기존에 사용하던 pose estimation 모델들은 feature map을 두 번 upsampling한다.
+
+[scalability of ViTPose]
+- 여러개의 transformer layer를 쌓고, feature의 차원을 늘리거나 감소 시킴으로써, 모델 사이즈 조정이 가능하다.
+- 유연하게 대응 가능하다는 장점이 있음
+- 모델 사이즈에 따라서 embedding 사이즈를 변경함
+
+[flexibility of ViTPose]
+- 어떤 데이터에도 잘 적용할 수 있도록, robust할 수 있도록 MAE기법을 적용시킴 (75% 마스킹함)
+- ImageNet으로 pre-train 시키고 MS COCO데이터 셋으로 finetune 시킴
+- 고 해상도 이미지의 경우 resize해서 모델을 학습시킴
+- 패치 임베딩 계층의 스트라이드를 변경하여 중복되는 토큰을 분할하고, 각 패치의 사이즈를 유지가능하게 하여 고 해상도 이미지도 잘 처리할 수 있게 함
+- 해상도에 유연한 모델을 만듬
+- window-based attention을 사용하는 경우, global context 를 반영하지 못하기 때문에 성능 저하를 일으킨다
+	두 가지 해결법을 제시한다
+	1. fixed windows대신에 shift-window 메커니즘을 사용한다
+	2. pooling window. global context feature를 window내에서 얻기 위해서 토큰을 pooling 한다
+- cross-window feature communication을 가능하게 한다
+- 위의 방식을 통해 추가 파라미터나 모듈을 사용하지 않고도 성능 개선을 가능하게 했다(연산량 관련인듯)
+- 파라미터 고정, MHSA(Multi Head Self Attention) 모듈 고정, FFN(Feed Forward Network) 모듈 고정.
+- 위의 고정을 통해서 ViTPose는 fully finetuing이 가능하다는 것을 보여준다.
+
+[transferability  of  ViTPose]
+- 작은 모델일수록 지식을 transfer시키는 것이 성능 향상의 한 방법이다. (지식 증류)
+- token-based distillation method를 활용한다
+- randomly initialize an extra learnable knowledge toekn t and append it to the visual tokens after the patch embedding layer of the teacher model.
+- then, freeze the well-trained teacher model and only tune the knowledge token for several epochs to gain the knowledge
+  
+<지적된 기존 문제>
+- 여전히 feature를 추출할때 CNN을 활용하기 때문에 이는 온전히 transformer를 활용한다고 볼 수 없다.
+- 구조가 복잡하다
+- transformer는 initalizing을 위해서 많은 양의 데이터가 필요하다
+
+<제시하는 해결 방법>
+- 온전한 encoder-decoder를 활용함으로써 CNN구조를 사용하지 않았다
+- 지식 증류 기법을 활용하고, teacher단을 imagenet을 사용하여 frozen 시켰다. finetune에 적합하도록 설계하여 적은 데이터 셋만으로 pose estimation이 용이하도록 하였다.
+- 구조를 단순화 시켰다.
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- bilinear interpolation
+- 
+
+<참고한 블로그>
+https://velog.io/@jody1188/Vision-Transformer-VITPose#vitpose
