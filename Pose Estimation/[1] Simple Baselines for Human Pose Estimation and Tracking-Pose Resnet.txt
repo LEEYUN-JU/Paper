@@ -1,0 +1,52 @@
+<Introduction>
+- pose estimation에 대한 관심이 증가하고, 그에 따른 알고리즘이 발전하면서, 모델이 점차 복잡해지고 어려워 졌다.
+- 본 논문에서는 훨씬 simple한 모델을 제시하고자 한다.
+
+<논문의 서론>
+- 사람의 자세만 추정하는 것이 아니라 연속된 포즈를 추정하는 기법 역시 새로운 분야로 자리 잡고 있다.
+- 이에 따라 더 모델이 복잡해 지고, 이는 모델의 분석 및 비교를 더 어렵게 했다.
+- 점차 세부적인 부분에 집중하고 신경쓰면서, 어떠한 부분들이 제일 중요한지 영향을 미치는지 점차 어렵게 되었다.
+- 입력 이미지의 해상도가 증가하고, 가용되는 공간이 넓어지면서 시스템 복잡도가 더 증가했다.
+- 이 논문은 자세 추정이 점차 발달함에 따라 복잡해지는 모델들을 볼 필요 없이 단순한 모델을 제공하고자 하는것이 목적이다.
+- 자세 추정과 tracking에 대한 simple baseline을 제공하는것이 본 논문의 목적이다.
+- ResNet에 deconvolutional layer를 추가해 주는 것이 우리가 제시하고자 하는 모델이다.
+- 해상도에 관련 없이 heatmap을 추출하는데 가장 단순한 접근 방법이다.
+
+<본문 - Pose Estimation>
+- Our method simply adds a few deconvolutional layers over the last convolution stage in the ResNet, called C5 .
+- Mask R-CNN에서 위의 방식으로 해상도에 관련 없이 feature를 뽑아내는데 좋은 성능을 보여주었다.
+- A 1 × 1 convolutional layer is added at last to generate predicted heatmaps {H1 . . . Hk } for all k key points.
+- loss 로 MSE 사용
+- Hourglass랑 CPN이랑 비교함
+- Figure 1에서 본것과 같이, skip-layer connection없이도 deconvolution 만으로 훌륭한 결과를 보여준다는 것을 알 수 있다.
+- obtaining high resolution feature maps is crucial, but no matter how. 
+- 
+
+<본문 - Pose Tracking>
+- 
+
+<관련 논문>
+- Hourglass : MPII 데이터 셋 사용. It features in a multi-stage architecture with repeated bottom-up, top-down processing and skip layer feature concatenation.
+- CPN(Cascaded pyramid network) : COCO 2017 사용,  It also involves skip layer feature concatenation and an online hard keypoint mining step.
+
+
+<논문 결론>
+- COCO 2017 데이터 셋을 가지고 Ablation study를 진행하였는데, ResNet 152 를 사용하는 경우 해상도가 낮으면 결과가 좋았고.
+- ResNet 50을 사용하고 Input Size가 좋으면 ResNet 152 를 활용하는 것과 유사한 결과가 나왔다.
+
+<Train & Test>
+- height : weight = 4 : 3 의 사이즈가 정답 이미지임
+- Test 할때, two-stage paradigm이 적용되었으며, 기본적으로 faster-RCNN을 사용하여 사람을 추정하고, 그 다음 사람의 heatmap을 추출하여 자세를 추정하였다.
+
+<++>
+- 기존의 human pose estimation을 위한 backbones(ResNet 등)은 input image를 32배 downsampling
+- 이러한 downsampling은 저해상도 feature map을 초래함
+- 작은 부분들 ( 손목, 발목)이 downsampling으로 인해 없어짐
+- Discretization problem(불연속)
+- 즉 8x8 feature map의 첫 pixel은 256x256 image에서 1~32번째 픽셀에 해당 ⇒ 1 pixel만 틀려도 32개 pixel이 다 틀리게 됌
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- Discretization problem 
+
+<참고한 블로그>
+https://velog.io/@dangdang2222/Simple-Baselines-for-Human-Pose-Estimation-and-Tracking
