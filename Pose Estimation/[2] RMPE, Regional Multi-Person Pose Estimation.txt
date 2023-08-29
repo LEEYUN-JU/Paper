@@ -1,0 +1,84 @@
+<논문의 서론>
+- Multi-person pose estimation in the twild is challenging.                                    
+- 두 단계로 나누어서 사람의 자세를 추정한다. 첫 번째 단계에서는 사람의 자세를 추정하기 위해서, 사람을 먼저 detect 해서 bounding box를 찾고, 두 번째 단계에서 사람의 자세를 추정한다.
+- bounding box를 사용하는 경우에는, bounding box를 찾는데 너무 집중한다는 단점이 있다. 
+- boundinb box를 사용하지 않는 경우에는, 제일 먼저 몸통의 자세를 추정하고, 그 다음 나머지 부위들을 추정해 나간다. 이때 사람이 너무 겹쳐있는 경우에는 추정하기 어렵다.
+- 본 논문에서는 정확하지 않은 bounding box가 주어진 경우에도 사람의 자세를 추정하고자 한다.
+- 그래서 본 논문에서는 정확한 bounding box를 추정하기 위해서 Faster-RCNN과 SPPE Stacked-Hourglass 모델을 사용했다.
+- 우리는 그래서 새로운 RMPE (Regional Multi-person Pose Estimation)을 제시하고자 한다.
+- SSTN(Symmetric Spatial Transformer Network) 를 SPPE뒤에 붙여서, 높은 품질의 single-person resion boundinb box를 찾아낼 수 있게 했다.
+- 그리고 redundant detection 문제를 해결하기 위해서, parametric pose NMS를 소개하고자 한다.
+- parametric pose NMS는 pose distance mettric을 사용하여 중복 포즈를 제거 했다.
+- PGPG(Pose-Guided human Proposal Generator)도 제안한다. 이는 훈련 샘플을 증가시키기 위한 것이다.
+- RMPE모델은 single-person 이든 multi-person이든 다 추정 가능하다.
+
+<관련 논문>
+[Single person pose estimation]
+- Tree models, Graph based models, DeepPose(DNN based), 
+- 사람의 자세가 올바른 경우에는 잘 추정 가능하지만, 항상 사람이 올바른 자세로 있는것이 아니다.
+
+[multi person pose estimation]
+- Deep Cut : 추정되는 모든 사람의 신체 부위를 감지하고, 라벨링 한 다음에 linear프로그램 을 통해서 assemble한다.
+- ResNet을 기반으로 한 강력한 감지 모델이 있다. 하지만, 너무 작은, 국소 영역만 보기에 좋지는 않다.
+
+[Two-step Framework]
+- CNN based SPPE method. 
+- two-step 으로 진행하는 경우에, 더 좋은 성능을 낼 수 있고, SPPE의 성능이 최대가 된다.
+
+<논문 본론>
+[Regional Multi-person Pose Estimation]
+- Parallel SSPE to avoid mimimums and furter leverage
+- SPPE trained for single person image, very sensitive to localizations error.
+- symmetric STN + parallel SPPE was introduced to enhance SPPE 
+- STN 은 selecting region of interests 를 자동적으로 잘 뽑아내기 위해서 고안되었다.
+- SDTN (Spatial De-Transformer Network) is required to remap the estimated human pose back to the original image coordinate.
+- After extracting high quality dominant human proposal regions, we can utilize off-the-shelf SPPE for accurate pose estimation.
+- SSTN is fine-tuned together with SPPE.
+
+[Parallel SPPE]
+- To help STN extract good human-dominant regions, we add a parallel SPPE branch in the training phrase.
+- output of this SPPE branch is directly compared to labels of center-located ground truth poses. 
+- freeze all the layers of this parallel SPPE during the training phase.
+
+[Discussions]
+- SDTN을 통해서 local minimum에 더 잘 수렴할 수 있게 되었다.
+- STN은 사람의 center값을 조정하는데 사용되었다.
+- STN과 SPPE를 둘다 성능을 높이기 위해서 parallel SPPE를 사용하게 되었다.
+- parallel SPPE는 사람의 중심이 아닌 자세에 대한 오류를 생성하여, STN이 중심에 위치한 포즈를 생성하도록 도와주고, 메인 SPPE에 영향을 주지 않는다.
+
+[Parametric Pose NMS]
+- parametric pose nms를 제안한다.
+- NMS scheme를 통해 제거 기준에 해당하면 추정된 자세를 제거한다.
+- 이 과정은 자세가 하나로 굳혀질때까지 계속된다.
+
+[Elimination Criterion]
+- 너무 비슷한 자세는 제거해 주어야 한다. 
+
+[Pose Distance]
+- present the distance function.
+- 원래 추정된 박스의 1/10의 사이즈이다. 
+- tanh operation filters out poses with low-confidence scores. output will be close to 1
+- 각 자세 별로 joints가 얼마나 매칭되는지를 counts한다.
+
+[Optimization]
+- 매개 변수가 많아서 계산이 어렵기 때문에, 두 매개 변수를 반복적인 방식으로 고정하여 최적화 하는 방법을 택했다.
+
+<Pose-guided proposals generator>
+[Data Augmentation]
+- two-stage pose estimation에서는 data augmentation이 필수적이다. 
+- 그렇지 않으면 모듈이 제대로 작동하지 않는다.
+- 임의적으로 비슷한 자세들끼리 모아서, 정답 데이터 셋을 가지고, 자세를 만들어 낸다.
+- 그런 다음 knn을 활용하여 비슷한 자세를 취한 사진끼리 모은다.
+- 그렇게 추정되는 bbox의 정확도를 높일 수 있도록 데이터 셋을 늘린다.
+- 정답과 detected bounding box 사이에 차이가 있다는 점을 발견했다.
+
+##############################정리##############################
+<지적된 기존 문제>
+- bounding box의 사이즈가 다 달라서 detection해서 추정하는데 문제가 발생함
+
+<제시하는 해결 방법>
+- 올바른 bounding box를 찾을 수 있도록, 학습 데이터 셋을 조정함
+- 사람의 center를 더 잘 찾을 수 있도록 함
+
+<참고한 블로그>
+https://velog.io/@haejoo/RMPE-Regional-Multi-Person-Pose-Estimation
