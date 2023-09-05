@@ -1,0 +1,61 @@
+<논문의 서론>
+- heat-map based 의 two-stage approach framework.
+- end-to-end 방식으로 학습이 가능하게 했고, OKS를 optimizer를 통해서 조정했다.
+- Top-down의 경우 많은 시간이 필요하고, real-time에 적합하지 않다는 단점이 있다.
+- Bottom-up의 경우, end-to-end학습이 불가능하고, 네트워크 밖에서 작업하는 post-processing 과정이 필수 불가결하다는 단점이 있고, 또한 인접해있는 key points를 잘 구분해내지 못한다는 단점을 지니고 있다.
+- post-processing에 지나치게 의존한다는 단점이 있음.
+- heat-map을 사용하지 않고, object detection관점에서 사람의 자세를 추정하고자 한다.
+- obejct detection 하는 과정이나 사람의 자세를 추정하는 과정이 유사하다.
+- OKS를 평가의 지표가 아니라 loss로 사용했음.
+
+<관련 논문>
+- EfficientHRNet.
+- DEKR
+- PANet : fusing features of various scales from the backbone.
+
+<논문 본론>
+- heat-map을 사용하지 않은 bottom-up 방식의 HPE.
+- 키 포인트 추정 여부에 따라서 학습을 했다. 보이거나 가려진 경우, 1과 0으로 confidence 측정.
+- 0.5 이하의 confidence 값은 전부 버리기.
+- real-time 모델에 초점을 맞추지 않았음
+- PANet을 사용하여 다양한 scale에서 feature를 추출 가능하도록 함
+
+[Anchor based multi-person pose formulation]
+- box 좌표를 사용하여 중심점을 알아냄
+- 이미지 사이즈에 상관 없이 독립적임?
+
+[IoU Based Bounding-box Loss Function]
+- distance-based loss를 사용하지 않음
+- CIoU를 사용, bounding box supervision을 위해서.
+- loss를 구할때 고려하는 것 : anchor의 위치(i, j), 스케일 (s), 순서 (k)
+
+[Human Pose Loss Function Formulation]
+- L1 loss는 OKS를 충분히 고려하지 않고, 적절치 않을 수 있다.
+- OKS를 기준으로 loss를 측정하고자 한다.
+- OKS loss를 사용함으로써, 각 key points별로 얼마만큼 차이나는지 알 수 있다.
+
+[Test Time Augmentations]
+- 테스트 시에 flip-test랑 multi-scale test를 가장 많이 사용한다.
+- 우린 안함
+
+[Keypoint Outside Bounding Box]
+- Top-down 방식의 경우 occlusion에 취약하다.
+- bounding box 범위에 있지 않은 key points들도 추정 가능하다.
+- 보통 bounding box 내에 있지 않은 keypoints들 때문에 자세 추정이 실패하는 경우가 많다.
+
+[ONNX Export for Easy Deployability] 
+- 입력이미지에서 개개인의 바운딩 박스와 자세를 추정 가능하게 해준다.
+  
+<지적된 기존 문제>
+- 복잡함
+- heat-map에 의존함
+- 입력 이미지 사이즈 고정
+
+<제시하는 해결 방법>
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- GIoU, DIoU, CIoU 
+- ONNX
+
+<참고한 블로그>
+https://velog.io/@jody1188/Vision-Transformer-VITPose#vitpose
