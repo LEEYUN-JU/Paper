@@ -1,0 +1,52 @@
+<논문의 서론>
+- 본 연구의 중점은 보이는 부분과 가려진 부분을 잘 구분해내는 것이 목적이다.
+- 학습시에 가려진 부분을 생성하기 위해서 데이터를 임의로 조작해 주어야 할 필요가 있었다.
+- ASBU를 제안한다.
+- 이전에 존재하던 것은 occluder mask를 사용했는데, ASBU는 boundary를 사용한다.
+- uncertainty map을 사용한다. 
+- ASBU 모델은 two-stage로 구성되어 있다.
+- 우선 UNet을 활용하여 image segmenter를 학습 시키고 data augmentation을 한다. > first stage
+- 스도 정답 이미지를 가지고 instance segemnter를 학습 한다. (Mask-RCNN 사용) > second stage
+- Mask-RCNN은 psedu-ground truth image를 정답으로 찾아 낼 수 있도록 훈련된다.
+- 본 논문의 contribution은 first stage의 input image를 잘 만드는 것과, uncertatinty 한 부분을 잘 예측하도록 하는 것이 목적이다.
+- 기존 연구인 PCNet의 단점은 occluder mask를 쓰면 occludee mask를 사용할 수 없다는 점이다.
+- 이 문제를 해결하기 위해서 PCNet에서는 물체의 순서를 graph 를 활용하여 나타내고, 카메라에 가까운 순서가 아니라, occludee에 가까운 물체를 선택 가능하도록 했다.
+- occluder mask가 아니라 occlusion boundary를 UNet의 input으로 사용하도록 하는것이 우리의 novelty 이다.
+- 여러 다양한 물체에 가려지는 것을 가정하고, psedo-truth를 찾을 수 있기 때문에, ordering-graph를 사용할 필요가 없다.
+- 두번째 contribution의 목적은 shape prior를 계산하는 것이다.
+- amodal instance segmentation, amodal completion and ordering recovery 에서 좋은 성과를 보여주었다.
+
+<관련 논문>
+- Instance segmentation : pixels of the same semantic class are clustered into instance based on visual cues such as object center or inner sign distance function.
+- Amodal instance segmentation : 합성된 이미지를 사용했으나 실제와는 거리가 있었다. 그래서 합성된 이미지와 실제 이미지간의 domain gap을 줄이는 것이 중요했다.
+- Amodal instance completion : amodal mask가 주어지고, object로부터 완전히 가려진 부분을 찾아내야 한다는 점에서 amodal instance segmentation과는 다른 task이다. amodal instance segmentation은 amodal mask가 주어지지 않는다.
+- 게슈탈트 심리학 (형태 심리학 : 관찰자의 의지가 개입함으로써 '보고 싶은 것'을 보게 된다는 것) 에 의해 모양의 볼록함이나 길이를 인지한다는 것.
+- boundary를 추가함으로써 ordering graph가 필요 없어짐
+- Uncertainty Estimation in Segmentation
+- estimates aleatoric uncertatinty
+
+<논문 본론>
+- jointly하게 amodal segmentation mask를 예측하는 부분과 연관된 uncertatinty map을 추정하는 부분으로 나누어져 있다.
+- 이 두 부분에서 uncertatinty-weighted loss function을 찾아낼 수 있고, amodal segmentation과 uncertatinty에 대한 error를 최소한으로 할 수 있게 해준다.
+- occludee와 occluder를 random하게 고른다.
+- occludee와 occluder를 겹쳐 놓는다.
+- occludee와 occluder의 경계선을 찾는다.
+- occluder에 의해 가려진 부분이 0으로 처리됨, occluder의 modal mask의 정답 부분
+
+- 두 가지 모두 학습에 사용된다는 것이고, 모델은 occluder의 mask 정보가 occluder의 것인지 occludee의 것인지 알지 못한다. 
+
+<Uncertatinty Weighted Segmentation Loss>
+- learning에 두가지 목적이 있다.
+- 하나는 uncertatinty를 최소화 하는 것이다.
+- 추정된 uncertainty 가 높은 경우, amodal segmentation과 정답 사이의 차를 줄이려고 한다.
+- 결과값으로 amodal segmentation prediction과 uncertatinty prediction 두 가지 채널의 결과값을 얻을 수 있다. 
+- box location에 관해서는 건드린게 없다(?)
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- gestalt principles
+- euler spiral
+- cubic bezier
+- shape primitives(여전히 뭔지 모르겠군)
+- SegNet
+
+<참고한 블로그>
