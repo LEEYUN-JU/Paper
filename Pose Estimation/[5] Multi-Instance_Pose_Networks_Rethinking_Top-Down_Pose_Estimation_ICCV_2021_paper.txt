@@ -1,0 +1,65 @@
+<논문의 서론>
+- top-down 방식으로 사람의 자세를 추정하는 경우, 단일 사람인 경우에 bounding box에 의존해서 추정한다.
+- 이러한 경우는 occlusion되는 경우가 많아서 정확도가 낮다는 단점을 가지고 있다.
+- 이에 우리는 MIPNet을 제안한다. 
+- MIPNet은 주어진 bounding box 내에서 2D pose estimation을 가능하게 한다.
+- 2D에서 사람의 자세를 추정하는 경우 사람의 골격에 해당하는 key points를 찾는 것을 목표로 한다.
+- top-down의 경우 bounding-box에 의존하고, bottom-up의 경우 이미지에서 사람의 keypoints를 먼저 잘 찾아내는 것에 집중한다.
+- 폐색 현상에 의해서 사람이 겹쳐있는 경우 자세를 추정하기 어렵다는 단점을 가지고 있다.
+- multiple pose instance for input bounding box를 제안한다.
+- 각 bounding box에서 하나 이상의 pose 를 제안하는 것을 목표로 한다.
+- bounding box 를 통해서 사람의 자세를 추정하는 경우 여러 bounding box에서 feature 를 공유하게 된다.
+- 이에 다양한 자세의 feature를 뽑기 어렵다?
+- 주어지는 bounding box내의 다양한 자세를 추정하기 위한 효율적인 학습 방법을 제시하고자 한다.
+- MMIB라는 블록을 제시한다. 
+- scalar instance-selector, lamda, N instance를 추정 가능하게 한다. 
+- 다양한 feature-extraction과 결합 가능하다.
+- mis-detected된 bounding box에서도 instance 추출이 가능하다.
+
+<관련 논문>
+[Top-dwon methods]
+- bounding box내에서 keypoints찾기
+- bounding box내에서 찾은 사람들은 모두 crop 하고 resize 되어서 동일한 사이즈로 맞추어 진다.
+- 폐색 현상이 발생하는 경우에는 사람의 자세를 잘 추정하지 못한다.
+
+[Occluded pose estimation]
+- graph model을 활용하여 폐색 현상을 극복하고 multi-person에 대한 자세 추정을 하려는 추세이다.
+- hierarchical graph grouping for joint assositation 을 활용하여 bottom-up method에서는 자세를 추정한다. 
+- 조건적인 input에 의존하는 모델이 많다.
+
+<논문 본론>
+- 사람의 자세를 추정하는 일은, 주어진 이미지 내에서 K개의 key points를 찾는 것이다. 
+- 대부분의 자세 추정 모델은 K개의 heat-map을 찾고 그 안에서 key points를 찾는다.
+- 사람의 key points를 detect하기 위한 convolutional pose estimator를 만들었다.
+- P(convolutional pose estimator)는 MSE를 최소화 하기 위해서 학습한다.
+
+[training multi-instance pose network]
+- top-down방식의 사람 자세 추정 모델 P를 제안한다.
+- N개의 포즈를 예측한다. 
+- 입력값은 입력 이미지 x와 lamda(추정해야할 자세 개수)이다.
+- n (ground-truth pose), N (predicted pose)
+- n <= N 인 경우, 정답이 loss를 계산하기 위해서 사용된다.
+- n > N 인 경우, 정답을 사용하지 않고 예측된 자세로만 loss를 계산한다.
+
+[MIMB : Multi-Instance Modulation Block]
+- feature를 추출하는 다른 모델에도 사용 가능한 MIMB를 소개하고자 한다.
+- top-down pose estimator P는 주어진 bounding box내에서 여러개의 instance를 추출 가능하게 한다.
+- F_sq (squeezes) : the global spatial information into a channel descriptor using global average pooling.
+- F_ex (excite) : allows modeling form channel-wise interactions on the output of F_sq.
+- 는 두 레이어로 구성되어 있다. (fully-connected, neural network)
+- F_ex의 output은 F_em에서 얻을 수 있는 lamda의 channel-wise activations에 사용된다.
+- F_em은 F_ex와 동일한 디자인으로 구성되어 있다.
+- 모든 predicton을 merging한 다음 OKS-NMS를 활용하여 0개부터 N-1개의 예측 값을 얻는다.
+- HRNet의 경우 오로지 앞 사람만 추정하는 것에 반해서, MIPNet은 뒷 사람 자세까지 한번에 추정가능하다.
+  
+<지적된 문제>
+- 입력 이미지로 주어지는 bounding box의 사이즈가 다 다르기 때문에 정확도가 낮아진 것으로 판단한다.
+
+<제시하는 해결 방법>
+- bounding box에서 추출 가능한 많은 자세를 추정 가능하게 하고, 그 중에서 가장 비슷한 것을 정답으로 고른다.
+- MIMB 를 제시함으로서 feature-extraction을 더 용이하게 했다.
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<참고한 블로그>
