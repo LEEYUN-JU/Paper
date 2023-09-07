@@ -1,0 +1,107 @@
+<논문의 서론>
+- 계산량을 고려 했을때 여전히 HR 기반의 자세 추정 모델을 따라가기에는 어렵다.
+- HRNet에서 high-resolution branch가 불 필요한 것이라고 주장.
+- 그 부분을 제거한 light pose 를 제안하고자 함
+
+<Introduction>
+- Bottom-up 방식의 경우, 사람을 먼저 detect 하는 과정을 거치지 않기 때문에 real-time에 더 적합하다.
+- 본 논문에서는 bottom-up 방식에 초점을 둔 pose estimation을 연구함
+- 적은 연산량, high-resolution branch의 깊이가 모델의 성능에 영향을 미친다는 점을 발견함
+- 성능을 높이기 위해서 두 가지를 고안함, fusion deconv head 그리고  large kernel conv
+- fusion deconv head는 고해상도 branch를 제거하고, scale-aware multi-resolution을 single-branch way로 가능하게 했다.
+- classification 분야에서 사용되는 large kernel conv가 bottom-up pose estimation 의 성능을 높이는데 도움이 된다
+
+<Contribution>
+- gradual shrinking : 계산량을 줄이기 위해서 고해상도 branch를 제거함
+- fusion deconv head & large kernel conv : LitePose의 수용성을 높이기 위함
+- 성능 좋음~
+
+<Related Work>
+- 자세를 추정함에 있어서 multi-branch를 사용하면 multi-resolution을 가능하게 한다
+
+- edge-device에서 사용하기 위해서 양자화 모델을 많이 개발하는 추세이지만, 여전히 계산량이 많이 들어가게 된다.
+
+- NAS(Neural Architecture Search) large-scale image classification분야에서 좋은 성능을 보여줬다.
+- 성능을 높이기 위해서 one-show NAS 방법을 제안했고, 우리는 once-for-all 방법을 푸루닝을 통해 안쪽의 채널을 감소시키면서, 적절한 입력값 사이즈를 고를 수 잇도록 했다.
+
+<Rethinking the Efficient Design Space>
+- gradual shrinking을 통해서 고해상도 branch를 줄이는 것은 연산량을 줄이는 데 한계가 존재한다는 것을 발견함
+- fucsion deconv head를 제안: scale 변화 문제를 해결 할 수 있게 branch를 줄이는 방법을 택함
+- single-branch를 사용하는 것이 성능을 높일 수 있다는 것을 ablation studies를 통해 증명
+
+<Scale-Aware Multi-branch Architectures>
+	[Scale-Awareness]
+- Bottom-up 방식에서 multi-branch의 경우는 scale 변화 문제를 완만하게 해준다.
+- single-branch의 경우 작은 사람이나, 붙어있는 joint를 찾아내기에는 적합하지 않다. 
+
+	[Mechanism]
+- HRNet 기반의 multi-branch 구조는 4 스테이지로 구성되어 있다. 
+- n개의 branch에서는 n개의 다른 feature map을 각기 다른 해상도로 처리한다.
+- 입력 feature를 처리할때 각 branch에서 feature값을 처리하고, 서로 처리한 feature 값을 branch 끼리 공유한다.
+
+<Redundancy in High-Resolution Branches>
+- 낮은 연산량을 고려할때, multi-branch는 비 효율적인 선택임
+- gradual shrinking 이라는 것을 제안하고자 함
+- 이는 고해상도 이미지를 처리하는 경우에, multi-branch를 줄이고자 하는 것임
+- 점진적으로 shrinking depth를 늘리면, single-branch를 사용하는 것과 유사한 효과를 얻을 수 있다.
+- 하지만, 성능은 증가하지 않는다.
+
+<Graudal shrinking>
+- HRNet 에서 불필요한 부분을 밝혀내기 위해서 각 스테이지 마다 gradual shrinking 실험을 진행한다.
+- 점진적으로 줄여나가는 shrinking 방법이 효과가 있다는 것을 밝혀냈다.
+- bottom-up 방식의 자세 추정에서 single-branch가 훨씬 효과가 있다는 것에 대한 뒷받침 증거가 된다.
+
+<Fusion Deonv HEad : Remove the Reduncdancy>
+- multi-branch 구조를 버리고, 다양한 스케일 문제를 해결하는 것은 매우 중요한 문제이다.
+- single branch를 유지하면서 multi-scale에서 해결 가능한 장점을 지니게 하는 방법을 찾는 것이 관건이다.
+- 위에 대한 해결책으로 우리는 fusion deconvolution layer를 마지막 prediction head에 붙이기로 했다.
+- 잠재된 특징들을 직접 사용 가능함으로써, 이에 대한것을 십분 활용 가능하다. 
+- 약간의 계산량 증가와 더불어, 7.6 AP가 증가했다.
+
+<Mobile Backbone with Large Kernel Convs>
+- downsampling layer가 너무 많으면 주요 정보를 잃을 수 있고, 이는 자세 추정 모델에 매우 치명적일 수 있다.
+- 이미지 classficiation 에서는 커널 사이즈의 증가가 결과에 큰 영향을 미치지 않지만, 자세 추정 모델에서는 큰 영향을 미치는 것으로 확인되었고, 가장 적절한 것이 7임으로 판명되었다.
+- 9로 하는 경우 오히려 성능이 저하되는 현상을 보임.
+
+<Single branch, High Efficiency>
+- multi-branch의 경우 계산량이 커진다는 단점 존재, single-branch의 경우 계산량이 현저히 줄어들음
+- single-branch lightpose의 성능이 더 좋음(?)
+
+<Neural Architecture Search>
+- LitePose 모델을 XS, S, M 그리고 L로 분류해서 각각 실험했다.
+
+<Optimization Goal>
+- stage가 진행 됨에 따라서 가장 적절한 channel 수는 무엇이고, 입력 해상도는 어떤게 적절한지 찾는 것이 관건이다
+
+<One-show Supernet Training>
+- 매 훈련마다, 각 채널에 대해서 weight sharing을 하고 있고, 이로 인해서 동등한 학습 효과를 누릴 수 있다.
+- 더 좋은 학습 효과를 위해서 pre-trained된 모델을 사용했다.
+
+<Ablation Experiments>
+- 연산량이 아주 조금 증가했지만, 성능이 훨씬 증가했음을 보여주고 있다. (Large Kernels)
+- 고해상도일수록 작은 사람을 찾아내기 쉽다는 장점을 가졌기에, 다양한 사이즈의 이미지를 다루는 것이 중요하다. (Fusion Deconv Head)
+
+<Conclusion>
+- edge device에서 multi-person의 pose estimation을 하는 것이 목표이다.
+- gradual-branch 구조는 multi-branch를 single-branch 구조로 재 구성하여, 연산량을 줄이기 위해 설계
+- 고해상도 이미지는, 적은 연산량 으로 계산할때 불필요하다
+
+<지적된 기존 문제>
+- 연산량이 너무 크다
+- High resolution에서 수용하기 위해서 multi-scale을 활용하는데, 이것이 지니는 장점을 십분 활용하고 있는가? 에 대한 의문
+- multi-branch가 굳이 필요한가? 연산량도 많고, 복잡하다
+- Top-down 방식의 경우, bounding box에 한사람만 들어가기 때문에, 여러 사람을 추정하는 것이 어렵다.
+- COCO데이터 셋에서는 자세를 잘 추정하지만, CrowdPose dataset에서 자세를 추정하는게 어렵다, 
+
+<제시하는 해결 방법>
+- single-branch 방식을 통해 모델 사이즈를 줄이고,
+- gradual shrinking을 통해 각 스테이지 별로 multi-scale 을 처리 가능하게 한다
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- GMACs = Number of Multiply-Add Operations / (10 ^9) = Giga Multiply-Add Operations per Second = 모델의 연산량 계산을 위한 단위
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 잠재된 특징들을 직접 사용 가능함으로써, 이에 대한것을 십분 활용 가능하다.  3.3 
+- 커널 사이즈 증가에 따른 자세 추정 모델에서의 증감효과 (figure 7)
+
+<참고한 블로그>
