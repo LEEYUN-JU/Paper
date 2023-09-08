@@ -1,19 +1,113 @@
-<논문의 서론>
+* pose-estimation 이라기 보단 adversarial attack에 대한 내용이지만, 그만큼 pose-estimation에서 어느 부분이 중요한지를 강조하는 것에 대한 뒷받침 자료로 사용 가능함.
 
-<관련 논문>
+<Abstract>
+- 본 논문은 좋은 classification 모델과 pose-estimation의 차이에 집중하고 있다.
+- MPII와 COCO를 활용하여 robustness를 비교했다.
+- regression 기반의 network인 attacking non-classification 문제에 대해서도 탐구하고자 했다.
+- pose-estimation은 adversarial attack에 robust가 강하다는 것을 밝혀냈다.
+- heat-map 기반의 방식이 regression-based 방식보다 훨씬 효과가 좋다는 것을 밝혀냈다.
 
+<Introduction>
+- 많은 모델들이 발전되어 왔지만, adversarial attack에 약하다.
+- heatmap, direct regression, multi-scale processing, attention 그리고 compositional constraint에 대해서 효과를 비교해보고자 했다.
+- body-joint 기반의 방식은 아주 조그마한 변화에도 민감하게 반응하는 경향이 있는것으로 밝혀졌다.
+- 엉덩이 아래에 있는 joint들은 adversarial attack에 취약하며, 목이나 머리같은 것들은 강건성을 보였다.
 
-<논문 본론>
+<Related Work>
+- adversarial attack에서 각기 다른 데이터 셋을 사용하기 위해서 다양한 optimization 방법이 등장하였다.
+(데이터 셋이 다 다르기 때문에 이에 따른 multi-optimization 처럼 사용 가능한 하나의 optimization이 필요한게 아닐까? 라는 나의 생각)
+- Black box attack의 경우, target network에 직접적으로 접근할 필요가 없기 때문에, 더 효율적이다.
+- adversarial attack은 주로 classification에만 사용되어 왔고, 최근이 되어서야 여러 분야에 사용되기 시작했다.
 
-  
-<지적된 기존 문제>
+<Background, Notations and Experimental Settings>
 
-<제시하는 해결 방법>
+[3.1 HPE]
+- 자세 추정을 위해서 이전 단계에서 사용했던 heat-map based 구조를 반복해서 사용 하는 기법을 사용했다.
+- 여러 분야에서 성능 향상을 보여주었다.
+- DLCM에서는 hourglass 모델을 활용하는데, 이는 사람의 bone-based 구조를 DNN이 더 잘 학습할 수 있게 하기 위해서 사용하였다.
+- 이에 따라, 연산량이 줄어들게 되었다.
+- 공개된 오픈 소스를 사용하고, 필요하면 자체 구현한다.
 
-<새롭게 알게 된 용어 & 다시 정리하는 용어>
+[3.1.1 Adversarial Attack Methods]
+- HPS classification 에서는 주어진 이미지에 대해, 최소한으로 맞춰야 하는 기준점이 존재하지 않는다. (?)
+- 효과적인 attack 을 위해서, perturbed/original * 100 score ratio를 사용했다.
+- PCKh값이 높을 수록 더 많은 attack을 받을 수 있게 했다.
 
+<Adversarial attack on HPE systems>
+- 접근이 쉬운 White Box Attack부터 살펴보기로 한다.
+- 작은 변화로 인해서 모델이 어떠한 영향을 받는지 black box attack역시 살펴볼 예정이다.
+- 각 joint 들에 대해, 어느 부분이 취약한지도 살펴 보고자 한다.
+
+[4.1 White Box Attacks]
+- FGSM-U, ISGM-U-10, IGSM-T-20 에 대해서 살펴볼 것이다.
+
+[4.1.1 HPE vs Classification Systems]
+- 공정한 비교를 위해서, 같은 ResNet backbone을 사용하고, 단순한 regression loss를 사용했다.
+- heatmap regression과 de-conv layer를 사용하기도 했다.
+- Chained-Prediction(한 joint 가 다른 joint에 미치는 영향)이 heatmap-based 방법으로 접근하기엔 robust 하지 않았다.
+- DLCM이 다른 모델들에 비해서 가장 robust 했는데, 이는 사람의 skeleton 배치를 강조하는 모델이기 때문인 것으로 밝혀졌다.
+
+[4.1.3 Effect of the Number of Iterations on the Attack]
+- 미세한 변화에도 민감하게 반응하기 때문에 좋지 않은데, 이러한 부분들은 오히려 classification이나, sementic segmentation 문제에 관해서는 매우 좋은 성능을 보여준다.
+- (미세하게 반응하지 않아야, 강건성을 보여주는 것이기 때문에, 미세한 변화에 민감하다는 것은 그다지 좋지 않은것임)
+
+[4.1.4 Stacked Hourglass Study]
+- 대부분의 HPE 모델들은 Stacked Hourglass 를 기반으로 구성되어 있다.
+- SHG의 결과값에 영향을 미치는지 실험했다.
+* target PCKh를 66.3에서 80.5까지 올렸다(?)
+* 이는 downstream stack이 upstream의 예측 성능 개선에 많은 영향을 끼치기 때문에, down stream에서 영향을 받으면 연쇄적으로 결과값도 영향을 받게 된다. 
+
+[4.1.5 Targeted vs. Untargeted Attacks]
+- Untargeted 보다 Target Attack이 훨씬 어렵다.
+- target은 정답이 명확하기 때문에 loss 값이 훨씬 커지게 되서 어렵다고 한다. 
+
+[4.2 Image-Agnostic Adversarial Perturbations]
+- 몇몇 모델들은 입력값도 다르고, 목표도 다른데도 불구하고 feature를 찾는 과정에서 똑같은 부분을 찾아내는 경향을 보였다.
+
+[4.3] Black-Box Attacks
+- 머리랑 목이 다른 관절 부분에 비해서 유독 robust 함을 보이는데, 이는 이미지를 crop 이미지를 활용하여 학습하기 때문이다.
+- 다른 crop 된 이미지에서 머리와 nect을 찾는게 어려운 이유도 이때문이다. 
+- 잘 detection 할수 없는 신체 관절 부위를 어떻게 찾는지가 관건이 될 것
+
+<Simple Image Processing for Defense>
+- 최근 연구들은 adversarial attack을 활용해서 segmentation map을 만들어 내는 분석에 활용하고 있다.
+- 놀랍게도, 뼈대 구조는 visual inspection 상으로 매우 유의미 하다.
+- 첫번째 이유로는, 네트워크가 사람을 학습 할때, 다른 신체 구조를 (팔, 다리 발, 몸통 등)을 쓸모없는 데이터로 취급하지 않고, 유의미한 데이터로 자동으로 학습하기 때문이다.
+- 두번째 이유로는, 모델이 gaussian 분포를 만들어 낼때, 어느 부분을 집중해서 보는지를 살펴 보았다.
+- 이미지 flipping 하는 경우에는 image-specific perturbation rendering 이 큰 영향을 받지 않았다.
+- non-flipped 하는 경우에는 5-10% 성능이 떨어지는 반면에, flipped하는 경우에는 70-75% 떨어지는 양상을 보았다.
+- 위의 결과를 토대로, image-specific perturbations 은 flipping한 이미지에 매우 효과가 있는 것임을 확인 할 수 있었다.
+- 이미지가 flipping 되어 있다면 전반적으로 perturbation에 영향을 받는 다는 것을 알 수 있다.
 - 
 
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- w.r.t : with respect to : ~에 대해 
+- L-BFGS(Limited-memory quasi-Newton methods) Hessian 행렬을 계산하거나 저장하기 위한 비용이 합리적이지 않을 경우 용량을 제한시켜서 계산하는 방법이다. 
+- IGSM(Iterative-Gradient-Sign-Method)
+- FGSM(Fast Gradient Sign Method) 
+- FGSM-U(Untargeted Fast Gradient Sign Method)
+- FGSM-T(Targeted Fast Gradient Sign Method)
+- SHG : Stacked Hour Glass
+- perturbation : 미세한 변화, 동요, 사람의 눈으로 감지하기 힘든 아주 미세한 노이즈 (주로 엡실론 e으로 표기함)
+- hallucination : 환각, 환청
+- image-specific attack
+- image-agnostic attack
+- image perturbation : 모델의 overfitting 을 방지하기 위함. augmentation과는 다른 내용인것 같음.
+
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- heatmap이 중요하다는 것의 뒷받침으로 사용 가능하다.
+- figure 3을 참조해 보면, 팔다리가 대부분을 차지하는 것을 볼 수 있다. (hip 아래로는 추출이 어렵다는 것의 뒷받침 증거)
+
 
 <참고한 블로그>
+
+<논문 요약>
+- Adversarial attack 분야에서 target이 있는 것은 loss가 커지기 때문에 더 어렵다.
+- HPE 과정에서 hip 아래의 부분들은 찾기가 어렵다.
+- Feature map 을 뽑아서 살펴보니, 대부분이 머리, 목 몸통 그리고 팔을 찾아낸다.
+- crop된 이미지 내에서 feature를 찾다 보니, 전체 적인 것을 보지 못하기 때문인 것으로 추정된다.
+- 이에 가려진 부분들을 잘 찾아 낼 수 있도록 하는것이 정확도를 높이는 관건이다.
+- Adversarial attack을 적용하는 경우 매우 민감하게 반응한다 > 조금만 자세가 틀어지거나 화질이 변하는 경우 결과가 크게 달라진다는 것을 의미한다. 이에 HPE adversarial attack에서 robust를 갖게 하는 것은 어렵다.
+
+- Adversarial attack 하는데 HPE에 사용되는 COCO랑 MPII 데이터를 사용했고, 이를 통한 분석을 나열한 논문? 정도 인듯.
+
