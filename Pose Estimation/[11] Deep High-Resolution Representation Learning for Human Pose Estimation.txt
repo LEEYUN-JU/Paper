@@ -1,0 +1,118 @@
+<논문의 서론>
+- 본 논문에서 pose estimation을 reliable high-resolution representation하게 하는데 focus하고 있다.
+- 대부분 존재하는 것들은 low-level에서 high-resolution을 구성하고자 하고 있다.
+- 우리의 방법은 high-resolution을 계속 유지하고, 병렬 구조로 되어있다.
+- multi-scale fusion 을 통해서 다른 layer에서 정보를 얻을 수 있다.
+- 위의 과정을 통해 더 정확한 keypoint heatmap을 얻을 수 있다.
+
+<Introduction>
+- 본 논문은 single-person pose estimation을 위한 모델을 작성한다.
+- Hourglass 모델은 low-to-high 프로세스를 통해 고해상도로 복구한다.
+- SBL은 high-resolution을 얻기 위해서 convolution layer를 거친다.
+- 모델의 전반적인 과정에서 high-resolution representation를 유지하는 모델 HRNet을 소개한다.
+- first stage에서 high-resolution subnetwork로 시작하고, 점차 high-to-low resolution 단계를 하나씩 밟아 나간다. 
+- 병렬 구조에서 multi-sclae fusion 을 서로 교환하는 과정을 반복한다.
+- 이미지 해상도를 복구하는 것이 아니라, 고해상도 이미지를 유지하는 것이 가능하며, spatially하게 더 정확한 결과를 얻을 수 있다.
+- 존재하는 대부분의 fusion shcemes들은 low-level과 high-level representation을 통합시킨다.
+- high-resolution representation 효과를 극대화 시키기 위해서 multi-scale fusion을 반복한다.
+- 고해상도 이미지가 자세 추정하는데 더 좋기 때문에, 우리의 모델이 더 정확할 수 밖에 없다.
+
+<관련 논문>
+- 자세 추정을 더 잘하기 위해서 probabilisitc graphical model 이나 pictorial structure model을 사용하고 있다.
+- regressing the position of keypoints 방법과 estimating keypoint heatmaps가 있다.
+- key points heatmap을 찾아내는 것은 classification network와 매우 유사한데, 우선 해상도를 낮추고, main body에서는 input으로 동일한 해상도를 유지한다.
+- keypoints들의 위치가 추정되고, 전체 해상도로 transfer된다.
+- 이를 통해 main body에서는 multi-scale fusion과 high-to-low 그리고 low-to-high 프레임 워크 유지 및 통합이 가능하다.
+
+[High-to-low and low-to-high]
+- high-to-low 과정에서는 저 해상도에서 높은 표현력을 생성하는 것을 목표로 한다.
+- low-to-high 과정에서는 높은 해상도 표현력을 생성하는것을 목표로 한다.
+- Hourglass 는 low-to-high 과정을 high-to-low 과정과 동일하게 진행한다.
+- Image Net classification과 같은 네트워크에서는 high-to-low 를 기반으로 한다. 
+- low-to-high 과정은 간단하게 bilinear-upsampling 하거나 transpose convolution layer한다.
+- ResNet과 VGGNet 과 같은 모델들은 마지막 두 단계에서 spatial resolution loss를 제거한는데, 이는 low-to-high 과정에서 해상도를 증가시키고, 계산량을 줄이기 위함이다.
+
+[Multi-scale fusion]
+- 다양한 해상도의 이미지를 multiple 네트워크에 넣고, output을 만들때는 통합한다.
+- Skip-connection을 활용하여 low-level features를 통합한다.
+- deep-fusion 과 extension에 영감을 받았다.
+
+[Intermediate supervision]
+- hourglass 나 convolutional pose machine은 intermediate heatmap supervision을 활용했다.
+
+[Our approach] 
+- high-to-low subnetwork를 병렬적으로 연결했다.
+- separate low-to-high upsampling 과정을 사용하고, low-level 그리고 high-level 모두 사용한다.
+- intermediate heatmap supervision을 사용하지 않고 좋은 성과를 거두었다.
+- Convolutional neural fabrics 그리고 interlinked CNN은 high-quality segmentation을 하지 못했는데, 그 이유로는 subnetwork 에 대한 디자인이 적절치 않았고, multi-scale fusion을 잘하지 못했다.
+- grid network, weight-shared U-Nets과 같은 조합들은 분리된 두 개의 구조로 구성되어 있다.
+- 1. information is only sent from high resolution to low resolution.
+- 2. information is only sent from low resolution to high resolution, + less comeptitive.
+- Multi-scale densenet같은 경우에는 안정적인 high-resolution representation을 만들어낼 수 없다.
+
+<논문 본론>
+- 해상도를 조절해 나가는 과정에서, 이미지의 어느 부분에서 heatmap을 추정하고자 했는지를 추정해 나간다.
+
+[Sequential multi-resolution subnetworks]
+- 기존에 존재하는 pose estimation들은 high-to-low resolution subnetwork를 연결하는 구조이다.
+- down-sampler layer들은 인접한 네트워크들의 해상도를 반으로 줄인다.
+- N_sr 해상도는 1 over {2 ^{r-}} 만큼 줄어들 것이다. 
+
+[Parallel multi-resolution subnetworks]
+- 처음에는 high-resolution subnetwork부터 시작하고, 점진적으로 high-to-low resolution subnetwork를 더해 나간다.
+- new stage를 점차 구성해 나가고, multi-resolution subnetworks를 병렬적으로 연결한다.
+- 결과적으로 뒷 stage로 갈 수록 앞 스테이지의 해상도를 따라가게 된다.
+
+[repeated multi-scale fusion]
+- exchaning information 하는 예시는 다음과 같다.
+- exchaning block을 만들고 3개의 병렬 convolution unit으로 구성한 다음 정보를 교류한다.
+
+[Heatmap estimation]
+- groundtruth heatmap은 2d gaussian 표준편차를 이요해서 만들어진다.
+- 각 키 포인트의 중심은 한 픽셀로 고정된다.
+
+[Network instaniation]
+- HRNet은 4개의 stage를 병렬로 포함하고 있고, 이러한 해상도는 점진적으로 줄어든다. 
+- 그리고 넓이는 점점 두배로 늘어난다. (채널 수 증가)
+- 첫 스테이지는 ResNet-50과 마찬가지로 4개의 residual unit을 가지고 있다.
+- 2, 3, 4번째 스테이지는 1, 4, 3 exchange block을 지니고 있다.
+- 각각의 exchange block은 4 개의 residual units을 포함하고 있고, 각 residual unit은 두 개의 3 X 3 convolution을 포함하고 있으며, 각각의 해상도와 exchange unit across 해상도를 가지고 있다.
+- 최종적으로 8개의 exchange unit이 있으며, 8개의 multi-scale fusion이 포함된다.
+
+<Ablation Study>
+- COCO 데이터 셋을 가지고 Ablation study를 진행하였으며, 모든 입력값은 256*192사이즈이다.
+
+[Repeated multi-scale fusion]
+- 마지막 exchange unit을 제외하고 나머지 network에서 multi-resolution 에 대한 정보를 공유하지 않는다.
+- parallel subnetwork에서는 각 stage별로 정보를 공유하지 않는다.
+- 모든 단계에서 정보를 공유한다. (이것이 본 논문에서 제안하는 방법)
+- 위의 세 가지를 비교 실험한다.
+- 결론적으로 Table 6를 살펴 보았을때, multi-scale fusion 하는 것이 더 좋은 성능을 보여주었다.
+
+[Resolution maintenance]
+- low-level feature들(저 해상도에서 추출됨)은 저 해상도가 subnetwork에서 그렇게 큰 영향을 미치지 못할때 추출되기 때문에, 성능에 영향을 미치지 못한다.
+- 따라서, 파라미터 수가 적은 경우에 저해상도 이미지를 고려하지 않는것이 오히려 좋은 성능을 보여주었다.
+
+[Representation resolution]
+- 현재의 해상도가 자세 추정 모델에서 어떠한 영향을 미치는지 두 가지 관점에서 살펴보았다.
+- 추출된 heatmap의 퀄리티에 따라 다르다.
+- 모델에 넣어주는 이미지의 입력 사이즈가 모델의 성능에 영향을 미치는지 살펴 보았다.
+- 저해상도 이미지를 사용하는 경우에 성능이 너무 떨어짐을 확인하였다.
+- Figure 6에도 나와 있듯이, 입력 이미지 사이즈에 따라 성능이 달라짐을 확인하였다.
+
+<Concolusion and Future Works>
+- 우리의 모델이 성능이 좋은 이유는 다음 두 가지를 들 수 있다.
+- 저해상도에서 고해상도로 이미지를 복원하는 것이 아니라, 고해상도 이미지를 계속 사용하는 것.
+- multi-resolution 을 반복적으로 사용하면, 고해상도를 사용하는 것과 같은 효과를 낼 수 있다.
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 입력 해상도에 따라 차이나는 모델 성능 > 만약에 heatmap mask 가 성능을 높여준다면 ,어떤 입력 이미지 사이즈일지라도 영향을 받아서 성능이 개선될 것이다.
+
+<사견>
+- 생각해보면, 당연히 고해상도 이미지 일 수록, 더 많은 정보를 포함하고 있을것이기에, 해상도에 의해 모델의 성능이 영향을 받는것은 당연한 것이다.
+- 본 논문에서 강조하는 것은 네트워크 간의 정보 공유인가? 아니면 그저 고 해상도에서 얻는 이미지에 대한 강조인가?
+
+<참고한 블로그>
