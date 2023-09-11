@@ -1,0 +1,104 @@
+<논문의 서론>
+- 많은 모델들이 CNN을 사용하고 있지만, CNN은 수용 가능한 범위가 한정되어 있으며, long-range perception이 불가능하다는 단점을 가지고 있고, 이는 pose estimation에서 치명적인 단점이다. 
+
+✨long-range perception >> backprop 이 길게 안된다는건가?? 잘 모르겠음✨
+
+- feature pyramid fusion structure 를 강화시킨 모델을 제안하고자 한다.
+- feature 추출에는 pre-trained된 swin transformer를 사용하였고, fuse feature-map을 위해서 pyramid structure를 사용(stage 별로 다른 feature 추출 가능)하였다.
+- CNN 기반의 다른 SOTA모델들에 비해 높은 성능을 보여주었다.
+
+<Introduction>
+- 옷이나 몸에 의해서 가려지는 폐색 부분들을 어떻게 가져오는지에 대한 연구가 활발히 진행중에 있다.
+- 좋은 feature를 얻기 위해서 노력하거나, 자세를 잘 구별해 내기위해서 노력한다.
+- 하지만 여전히 한정된 자원과, 모든 자세를 추정하는 데에는 한계가 존재한다.
+- keypoint position regression : treats pose estimation as a joint position regression problem.  
+- keypoint heatmap estimation : 2D gaussian kernel on all keypoints, construct ground truth heatmaps, and utilizes these heatmaps to supervise the prediction with L2 loss. 
+- regression is relatively simpler.
+- attention mechanism은 similarity와 weights를 계산한다.
+- multi-head attention이 더 좋은 효과를 낸다는 것을 입증했다.
+- 하지만 transformer구조를 pose estimation에 직접 적용하는 것은 불가능하다.
+- 연산량 많음, feature map size가 너무 커짐, memory를 비약적으로 많이 사용함.
+- 게다가 output으로 single-scale의 feature map을 추출해 내기 때문에 multi-scale object에 사용하기에는 제한적이다.
+- long-range dependencies capturing ability 와 avoid excessive memory consumption을 해결하기 위해서 swin transformer를 사용한다.
+- 여기에 scale-invariant를 추가해 주기 위해서 top-down feature pyramid 를 사용한다.
+
+<Related Work>
+[Human Pose Estimation]
+- CNN 장점 : local connectivity, weight sharing.
+- encodes the spatial uncertainty of the locations.
+- captures the spatial realtionships between the parts.
+- HRNet : use sub-network and mainain high-resolution through the whole process.
+- lower resolution in parallel, fueses the output from all branches.
+
+[Attention Mechanism and Transformer]
+- transformer는 원래 NLP를 위해서 나온 모델이며, encoder와 decoder를 stack 하고 feed-forward layer를 사용하는 구조다.
+- TransPose는 translation equivalence of CNN과 long-range dependencies capturing ability of the transformer를 결합하는 것을 제안한다.
+
+[Image Feature Fusion]
+- multi-level features 추출이 가능하고 이를 fuse한다.
+- HyperNet의 경우 예측 전에 concat한다. 
+- Spatial Pyramid Pooling은 multi-scle filter를 조사한다.
+- image pyramid는 combine 하고 utilize하는데 특화되어 있다.
+- low to high level하는데 FPN(Feature Pyramid Net)이 큰 영향을 미친다고 한다.
+
+<논문 본론>
+- Swin Transformer block과 feature pyramid fusing을 이용한 Swin-Pose를 제안하고자 한다.
+- extract important information 그리고 long-range dependencies between joints from the images를 가능하게 한다.
+- feature pyramid 는 가장 실용적이다 왜냐면, feature map과 keypoint heatmap regression을 적용가능하게 하기 때문이다.
+
+[Swin-Pose Transformer Module]
+- 기존에 존재하는 Swin-transformer 는 패치 사이즈가 4X4이다.
+- token들은 classification token이 포함된 linear embedding layer로 전달되고, position information이 encoded된다. 
+- Stage 1을 만들기 위해서 token이 추가 되었다.
+- Stage 1은 patch merging layer이다.
+- 2 X 2 neighbouring patches가 merge된다.
+- multiple swin transformer block은 연결되고, 3개의 독립적인 stage로 구성된다.
+- 제안하는 transformer block은 기존에 존재하는 swin transformer block을 그대로 사용한다.
+- 달라진 점이 있다면, multi-head self-attention layer가 shifted window-based multi-head self-attention (SW-MSA)로 교체되었다는 것이다.
+- 기존의 Swin-Pose transformer backbone에서 feature를 추출하고 나면, heatmap regression layer가 모든 keypoints의 위치를 추정하는데 적용된다.
+- human-pose estimation task hevily depends on the local features near each keypoint.
+- To improve the local feature extraction performance of the Swin-Pose transformer Module, feature fusion module before the heatmap regression layer.
+
+[Feature Fusion Module]
+- Swin-transformer에는 4가지 stage가 있다.
+- use top-down pathway and lateral connections to fuse the feature maps from different resolution levels and combine outputs of different resolutions and semantic information.
+- 1 x 1 convolution 이 upper stage에서 오는 output의 채널을 변경하기 위해서 사용된다.
+- 채널을 유지하면서 bi-linear up sampling이 사용된다. 
+- lateral connection에서 추출된 lower stage에서 오는 output의 channel과 resolution을 맞출 수 있다.
+- 이 과정을 반복하면서 highest resolution을 얻을 수 있고, 이것을 heatmap regression에 사용한다.
+- multi-scale feature fusion의 효과를 검증하기 위해서 두 가지 방법을 사용했다.
+- 방법 A는 element-wise sum이다. original features 에서 summation을 통해 새로운 features를 생성하는데, 이 과정에서 original feature의 손실이 발생한다.
+- 방법 B는 feature map을 채널별로 잘라서 이은 다음, 합쳐서 모든 정보를 저장 가능하게 한다.
+
+[Analysis]
+- transformer가 pose estimation에 더 적합하다고 생각하는데, 이는 CNN은 고정된 filter를 사용하기 때문이다.
+- 따라서 fixed-sized reception filed를 가지고 있고, lack the ability to gain relationships between far apart pixels하다.
+- long-range dependence information은 human pose estimation에 필수적으로 필요하다.
+- 서로 떨어져 있거나, 가려진 경우에도 body joint의 position을 locate할 수 있게 해준다.
+- attention mechanism을 통해서, transformer는 유사도나 서로 다른 픽셀의 관계성을 계산한다.
+- 이를 통해서 long-range dependence information을 얻어내는게 가능하다.
+- pre-trained 된 모델을 사용하지 않으면 20% 정도 성능이 저하된다.
+  
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- DCNNs(Deep convolutional neural networks) 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- transformer를 pose estimation에 직접 이용하는데 단점이 되는 이유 : 연산량이 너무 많고, featuremap size가 너무 크고, memory를 너무 많이 잡아먹는다.
+
+<문제점>
+- 메모리 문제로 인해서 batch size 10???;;;
+
+<Ablation Study>
+- Input image 해상도를 각각 다 다르게 실험
+- Pretrain 모델 변경
+- 모델 사이즈 변경 (Swin-Tiny, Swin-Small, Swim-Base, Swin-Large)
+- Fusion approach (method A and method B)
+
+<참고한 블로그>
+
+<요약>
+Feautre fusion 을 FPN을 통해서 가능하게 하고,
+연산량을 줄이기 위해서 linear layer를 사용하여 transformer에서 연산량이 제곱되는 것을 방지했고,
+multi-scale feature를 뽑아내는 것이 가능하게 했다.
+
+이 과정에서 swin-transformer에서 사용되던 4*4 패치 사이즈로 feature를 추출하는 방식을 16*16 > 8*8 > 4*4 의 단계로 진행할 수 있게 변경하였다.
