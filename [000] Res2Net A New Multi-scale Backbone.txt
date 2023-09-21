@@ -1,0 +1,98 @@
+<Abstract>
+- 최근에 CNN을 활용하는 모델들이 backbone의 stronger multi-scale representation ability를 입증하고 있다. 
+- However, most existing methods represent the multi-scale features in a layer-wise manner.
+- 우리는 novel building block for CNN인, Res2Net을 제안하고자 한다, by constructing hierarchical residual-like connections within one single residual block
+- 각 네트워크 레이어에서 받아 들이는 멀티스케일 특징이 커졌다
+- CNN backbone 모델 중에 SOTA를 달성하였다.
+
+<논문의 서론>
+- 이미지 속에 존재하는 사물들의 사이즈가 다 다르다 > 뽑아 내야 하는 feature의 사이즈가 제각기 다르다
+- object가 존재하는 범위 보다 더 많은 범위 내에서 contectual information이 존재한다.
+- 탁자 위에 놓인 object가 무엇인지 구분하기 위해서는, 탐지된 탁자가 어떠한 것인지를 아는 것이 도움이 된다.
+- fine-grained classification 이나 semantic segmentation분야에서 물체를 더 잘 감자히가 위해서는, 각기 다른 사이즈의 정보를 인지하는 것이 중요하다.
+- 다양한 이미지 분야에서 좋은 feature를 잘 찾아내는 것이 중요하다.
+- 비전 작업에서 objects/parts/context를 각기 다른 사이즈로 잘 묘사하기 위해서는 광범위한 인지 영역이 필요하다.
+- CNN에서 feature extraction 하는 기능이 많은 비전 분야에서 효과적으로 작용하고 있다.
+- 그래서 network를 어떻게 design 하는지가 CNN모델을 더욱 효과적으로 사용 가능한 키 포인트가 된다.
+- CNN의 계층별 다중 스케일 표현 강도를 향상시키는 대부분의 기존 방법과 달리, 우리는 보다 세분화된 수준에서 다중 스케일 표현 능력을 향상시킵니다.
+- 이러한 작은 필터 그룹들이 계층 구조로 연결되어서 output의 feature를 표현 할 수 있는 범위를 증가시킨다
+- 그룹 필터가 feature를 추출해서, 다음 그룹에 넘기고, 또 다음 그룹에 넘겨서, 모든 input feature maps 가 진행된다.
+- 마지막으로 모든 그룹에서 나온 feature map을 concat 해서, 정보를 결합한다.
+- 필터 조합을 통해 다양한 scale의 feature 를 얻을 수 있다.
+- 새로운 차원인 scale이라는 것을 이용한다.
+- scale을 늘리면 다른 것들의 차원을 늘리는 것 보다 효과가 좋았다.
+
+<관련 논문>
+- AlexNet : stack filters
+- VGGNet : increase network depth and uses filters with smaller kernel size. provides a stronger multi-scale representation model than AlexNet
+- AlexNet and VGGNet -> stacks filter directly, which means each feature layer has a relatively fixed receptive field.
+- NIN : Network in Network : to enhence model discriminability(차별성) for local patches.
+- GoogLeNet : utilizes parallel ﬁlters with different kernel sizes to enhance the multi-scale representation capability.
+- Inception Nets : stack more ﬁlters in each path of the parallel paths in the GoogLeNet to further expand the receptive ﬁeld.
+- ResNet : short connections to neural networks, thereby alleviating the gradient vanishing problem while obtaining much deeper network structures.
+- DenseNet : Enable the network to process objects in a very wide range of scales.
+- DPN : combines the ResNet with DenseNet to enable feature re-usage ability of ResNet and the feature exploration ability of DenseNet.
+- DLA : combines layers in a tree structure.
+
+<multi-scale representations for vision tasks>
+[Obejct Detection]
+- 많은 분야에서 Multi-scale feature representations of CNNs are of great importance
+- R-CNN : mainly rely on the backbone network 
+- VGGNet : extract features of multiple scales > SPP-Net backbone 네트워크 이후의 공간 피라미드 풀링을 활용하여 멀티 스케일 능력을 향상시킴
+- Faster R-CNN : region proposal network 를 다양한 크기의 bounding box를 생성하는데 사용함.
+- FPN : 단일 이미지에서 다양한 사이즈의 feature를 추출하는 pyramid로 접근
+- SSD : 각기 다른 스케일에서 비주얼 정보를 얻고, 각기 다른 스테이지에서 feature map을 추출함
+
+[Sematic segmentation]
+- propose one of the earliest methods that enables multi-scale representations of the fully convolutional network (FCN) for semantic segmentation task. 
+- Deep Lab, introduces cascaded atrous convolutional module to expand the receptive ﬁeld further while preserving spatial resolutions.
+- PSPNet : global context information is aggregated from region-based features via the pyramid pooling scheme.
+
+[Salient object detection]
+"통칭 SOD라고 하며, 영상속에서 가장 중요한 물체를 찾아내는 것으로, detection이나 segmentation과는 다른 영역이다"
+- 단일 이미지에서 가장 중요한 영역이 어딘지 찾아내기 위해서는, 전체 이미지의 feature에 집중해야할 필요가 있다.
+- 기존에 존재하던 방식들은 global contrast 나 multi-scale region features 를 수작업으로 표현했다.
+- Deep learning이 도입되면서 salient object detection 방법이 제안되었다.
+
+[Concurrent works]
+- Big-Little Net : multi-branch network composed of branches with different computational complexity.
+- Octave Conv : decomposes the standard convolution into two resolutions to process features at different frequencies.
+- MSNet : 
+- HRNet : 
+
+<논문 본론>
+- Res2Net module은 feature를 추출하는 대신, 3 X 3 필터를 bottle neck에 넣고, 연산량은 비슷한 양을 유치한채 multi-scale feature를 뽑아내는 것을 가능하게 했다.
+- 특히, 3X3필터를 더 작은 필터 그룹으로 대체하는 동시에, 계층적 residual-like style로 연결해 주었다.
+- 우리는 단일 residual block 내에서 residual-like connection 을 갖는 Res2Net을 제안한다.
+- 1 X 1을 거쳐서 나온 맵을 s개의 feature map subset으로 나누고, 이를 x_i 라 한다. i 는 s개 만큼 존재한다.
+- 각기 x_i는 같은 spatial size를 가지고 있지만, 입력값에 비해 1/s 개의 채널을 가지고 있다.
+- x_1 을 제외하고, 각 x_i는 K_i( )라는 3X3 convolution 을 지니고 있다.
+- K_i ( )의 output으로 y_i가 있다. 
+- x_i feature의 subset은 K_i-1( )의 output에 더해진다, 그리고 K_i ( )에 반영한다.
+- s의 수가 증가함에 따른 파라미터 수를 줄이기 위해서, x_1의 3X3 convolution 을 제거했다.
+- y_i 는 다음과 같다. (수식 1)
+- 각 3 X 3 convolutional operator K_i( ) s에서 나온 각기 feature에 대한 모든 정보를 받아들일 수 있다.
+- s는 scale 차원을 조정하기 위해서 사용되었다.
+- s가 커지면 커질수록, 받아들이는 정보가 풍부해지지만, concatenation을 통해서 계산하기 때문에 연산량이 많아진다.
+
+[Integration with Modern Modules]
+- Res2Net model에는 SEBlock이 결합되어 있다. (SEBlock 에서 말하는 채널 결합? 을 모델에 직접적으로 넣어 줬다는 뜻인듯?)
+
+[Dimension cardinality]
+- dimension cardinality란 필터 안의 number of groups를 나타내는 것이다.
+- CNN내에서 성능을 single-branch 에서 multi-branch로 끌어올리는  중요 요인이다.
+- 단순한 3X3 convolution filter를 group convolution으로 변환시켰다.
+- 여기서 c가 number of groups를 나타낸다.
+
+[SE block]
+- SE block 을 residual connection 전에 넣어주었다.
+- SE block 을 통합시킴으로써 얻어지는 이점이 있다.
+
+[Integrated Models]
+- Res2Net, Res2Next, Res2Net-DLA, 등등 CNN을 사용하는 다양한 모델에 통합하여 적용시켜 봄
+- 성능 비교
+- 모델 깊이에 따른 비교
+- scale dimension에 따른 비교(모델 복잡도에 따른 성능 비교)
+- stronger representation 을 위해서 cutmix를 사용함, 
+  
+<참고한 블로그>
