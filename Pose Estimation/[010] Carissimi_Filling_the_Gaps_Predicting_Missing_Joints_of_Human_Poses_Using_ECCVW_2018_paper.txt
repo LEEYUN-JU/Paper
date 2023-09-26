@@ -13,10 +13,29 @@
 - 이에 불구하고, 양질의 결과를 얻을 수 있다.
 - 뿐만 아니라, 이미지를 사용하지 않기 때문에, 카메라 밖의 joint역시 예측 가능하다.
 - in the wild셋에서 사람의 자세를 잘 추정해 내며, 다른 모듈에도 쉽게 적용 가능하다는 장점을 지니고 있다.
-- 
 
-<
-<논문 본론>
+<Related Works>
+- SPPE(Single Person Pose Estimation) 에서 in the wild 데이터 셋을 활용하고, MPPE(Multi person pose estimation)으로 유행이 변화했다.
+- 이는 occlusion이 더 많이 발생하고, body interaction이 더 복잡하다.
+- 자세 추정은 크게 두 가지 카테고리로 분류할 수 있는데, 하나는 top-down 이고 다른 하나는 bottom-up 방식이다.
+- top-down 방식의 가장 큰 단점은 초기에 사람을 detection한 결과값이, 자세 추정에 매우 큰 영향을 미친다는 것이다.
+- (사람 detection이 안되면 자세 추정 자체가 안됨)
+- 첫번째 stage에서는 보이는 부분을 찾고, 두번째 stage에서는 보이지 않는 부분을 찾는것을 목표로 한다.
+
+- 한편 Bottom-up 방식에서는 전체 이미지를 입력값으로 받고, 이미지 외에 정보는 일절 받지 않는다.
+- 두 단계로 구성되어 있는데, 첫번째 단계에서는 키포인트 후보군을 설정하고, 두번째 단계에서는 추출된 키포인트 후보군들을 묶는 과정을 거친다.
+- 이에 두번째 단계에서 묶는 partitioning 과정을 개선 시키는 다양한 해결법들이 등장하였다.
+
+- 우리가 제안하고자 하는 방식은 기존에 존재하는 방법들처럼 pose estimation을 하지 않는다.
+- 그 이유는 다음 두가지와 같다.
+- 불완전한 pose에서, 알맞게 존재하는 predictions 들을 찾는 것을 목표로 하고 있다.
+-  RGB데이터를 전혀 사용하지 않고, 오로지 x,y 좌표값만을 사용하고, x,y 좌표만으로 충분히 robust한 prediction이 가능함을 보여준다.
+
+<Data Denoising and Restoration>
+- [33]번 논문에서 denoising autoencoder를 사용해서 사람의 자세를 추정했다.
+- 이에 영감을 받아서, denoising 하고 restoration 하는 과정에서 missing joints를 추정 가능하도록 하는 방법을 고안했다.
+
+<Methodology>
 
   
 <지적된 기존 문제>
