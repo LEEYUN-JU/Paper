@@ -36,6 +36,11 @@
 - 이에 영감을 받아서, denoising 하고 restoration 하는 과정에서 missing joints를 추정 가능하도록 하는 방법을 고안했다.
 
 <Methodology>
+- 우리가 선택한 모델은 두 가지 부분에서 영감을 얻었다.
+- 하나는 missing information에 대한 부분을 반드시 예측해야 한다는 것이고, 다른 하나는 low dimentional data에서도 잘 추정해야 한다는 것이었다.
+- RGB 이미지와는 다르게 우리의 데이터는 작은 2d 좌표 벡터로 구성되어 있기 때문에, 심플한 모델을 선택했다.
+- 오토 인코더는 incomplete한 데이터를 다루기위해서 특별히 디자인 된 것으로, 복잡한 데이터 distribution에 적합하기에 선택했다.
+- 
 
   
 <지적된 기존 문제>
