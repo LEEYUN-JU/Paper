@@ -40,16 +40,29 @@
 - 하나는 missing information에 대한 부분을 반드시 예측해야 한다는 것이고, 다른 하나는 low dimentional data에서도 잘 추정해야 한다는 것이었다.
 - RGB 이미지와는 다르게 우리의 데이터는 작은 2d 좌표 벡터로 구성되어 있기 때문에, 심플한 모델을 선택했다.
 - 오토 인코더는 incomplete한 데이터를 다루기위해서 특별히 디자인 된 것으로, 복잡한 데이터 distribution에 적합하기에 선택했다.
-- 
 
-  
-<지적된 기존 문제>
+<3.1 auto encoder : auto-encoder에 대한 전반적인 설명>
+- 만약 정답이 input보다 작으면, undercomplete 하다고 하고, 정답이 input 보다 크면, overcomplete 하다고 한다.
+- 만약 hidden layer unit이 original input보다 크면, encoder는 identify function을 학습하게 된다.
+- 이러한 방식을 denoising auto-encoder라고 부르는데, 이는 input에 대한 강건성을 높이는 것이 목적이며, 이 목적은 본 연구에서 달성하고자 하는 목표와 일치한다.
+- auto-encoder 를 사용하는 경우 가려진 부분은 근처 vector에 영향을 받아서 재구성하게 된다.(ex 컬러 등)
+- auto-encoder 를 사용하는 또 다른 이유중 하나는 continuous 한 representation을 사용 가능하기 때문이다. 
+- classic auto-encoder와의 차이점은, 압축된 representation을 사용하지 않는다는 것이다. 
+
+<3.2 Modeling the Human Pose>
+- 이미지는 다를지언정, 추정하는 자세는 비슷하다.
+- 목부터 최소 어깨나, 엉덩이까지의 거리를 계산하여 몸통의 center값을 찾는다.
+- 본 논문에서 제시하는 방법은 incomplete pose를 사전에 요구하며, 사전에 감지된 joint들은 network process에 영향을 미친다.
+- denoising auto-encoder를 사용할 예정이기 때문에, training data역시 corrupted하게 한다.
+- 본 논문에서 제시하는 방법은 총 두개의 layer를 사용하여 pose 를 예측한다. 
+- 레이어 뮤(m)에서는 표준 편차를 학습 시켜, 후보군을 미리 추출해 놓을 수 있게 하고, 레이어 시그마( )에서는 표준 편차에서 추출한 후보군 중, 자세로 추정되는 부분을 확정시키는, 즉 폐색된 자세를 완전히 예측하는 레이어이다.
+
+ <지적된 기존 문제>
 
 <제시하는 해결 방법>
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-
-- 
+- RMPE(Regional Multi-Person Pose Estimation) 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - occulsion된 부분을 찾는것에 대한 중요성
@@ -57,4 +70,9 @@
 <참고한 블로그>
 
 <논문 요약>
-
+- 사람의 자세를 추정할 때 폐색된 부분이 존재하는데, 이는 자세를 추정하는데 많은 영향을 미친다.
+- 따라서 가려진 부분을 예측함으로써 자세 추정의 정확도를 높인다.
+- auto-encoder방식을 사용햇으며, 기존의 classic auto-encoder의 경우 압축된 특징을 활용하는 반면에, 본 논문에서는 이를 변형 시킨, 유동적인 representation을 사용하게 함으로써, 자세 추정에 좀더 유리할 수 있도록 하였다.
+- 학습시에 사용되는 트레이닝 데이터 셋 역시, auto-encoder기반이기 때문에, 일부분을 가려서 학습하였다.
+- 본 논문에서 제시하는 방법에서는 두 개의 hidden layer를 사용하여 사람의 자세를 추정한다.
+- 첫번재 레이어에서는, 자세가 있을법한 곳에 대한 표준 편차 및 후보군을 계산하고, 이를 토대로 output을 도출해내는 과정에서, 폐색된 부분으로 추정되는 joint를 특정한다.
