@@ -1,0 +1,54 @@
+<Abstract>
+- Knowledge Distillation기법을 사용한 pose estimation
+- 사람의 center를 찾아서 이용하는 것이 pose estimation에 있어서 가장 중요한 부분임
+- 데이터 한계 극복을 위해서 UBody 데이터 셋 추가로 이용함
+- 첫번째 단계에서는 visible & invisible 키포인트를 supervise하는 것이 목표이다.
+- 두번째 단계에서는 성능을 올리는 것을 목표로 한다.
+
+<Introduction>
+- 몸 전체의 자세를 추정하는 것보다, 얼굴 및 손을 포함한 whole-body를 추정하는 것이 훨씬 어려운데, 그 이유는 다음과 같다.
+- 1) 몸 전체의 keypoints들이 hierarchical 한 구조로 되어 있기 때문이다.
+- 2) 손이나, 얼굴의 경우 해상도가 좋지 않다.
+- 3) 사람이 많을 수록, 추정해야하는 부분이 더 많이 폐색된다.
+- 4) whole-body를 추정하기 위해서 학습 시키는 경우에 데이터 셋이 많이 부족하다.
+- KD(Knowledge Distillation)은 계산량을 최소한으로 하고, 효율적인 성능 증대를 위한 방법이다.
+- 이에 본 논문에서는 이의 장점을 pose estimation이라는 분야에 접목시키고자 한다.
+- 동일한 모델 두개를 사용하며, 하나는 teacher 모델, 다른 하나는 student모델로 사용한다.
+- 특히 이런 plug-and-play approach가 student 모델의 성능을 무려 20%나 높여준다.
+- 본 논문에서 주장하는 contribution은 다음과 같다.
+- 1) two-stage pose knowledge distillation method를 제안하며, 효율적인 whole-body pose estimation을 위함이다.
+- 2) whole-body 데이터 제약을 없애기 위해서, 다양한 손 제스쳐와 얼굴 표정을 사용했다.
+- 3) RTMPose를 baseline으로 사용했으며, DWPose는 효율적인 generation task역시 달성했다.
+
+<Related work>
+[2.1 2D Whole-body Pose Estimation]
+- Openpose : body part의 여러 부분을 조합한 데이터 셋을 사용함
+- MediaPipe : whole-body 랜드마크 감지를 위해서, 응용하기 쉽게 모델을 설계했다는 장점을 지님
+- ZoomNet : 각기 다른 body parts의 다양성을 받아들이고, 이를 hierarchical single network로 해결하고, 처음으로 top-down method를 사용했다.
+- ZoomNAS : sub-module을 연결함으로써, 성능을 높였다.
+- TCFormer : vision token을 clustering 그리고 merging 하여, 다양한 위치, 사이즈 그리고 모양에 대한 강건성을 높일 수 있었다.
+- RTMPose : pose estimation 에서의 key facotrs를 언급하며, real-time 모델을 설계하고, COCO-Whole body 데이터 셋에서 SOTA를 달성했다.
+
+[2.2 Knowledge Distillation]
+- KD 방법은 모델을 압축하는 하나의 방법이다.
+- logit-based distillation 기반의 방식에서 feature-based distillation 방식으로 변경한다.
+- 우리가 제안하는 DWPose는 pose estimation 분야에서 KD 방식을  효율적으로 적용한 첫번째 방식이다.
+
+<Method>
+- 
+  
+<지적된 기존 문제>
+
+<제시하는 해결 방법>
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- from scratch : 처음부터, 바닥부터, 딥러닝 논문 내부에서 사용된 경우 남의 논문을 토대로 내가 직접 구현한 코드를 일컬음 
+- plug and play approach : 즉시 시작, 꽂기만 하면 사용할 수 있는 것
+- logit : 확률화되지 않은 예측 결과
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+
+<참고한 블로그>
+
+<논문 요약>
+
