@@ -35,6 +35,35 @@
 - 우리의 모델 CTD(Conditional Top-Down models)는 총 2개의 input을 가지고, bounding box 와 pose 를 입력으로 가진다.
 - PoseFix나 PoseRefiner와 유사한 방식이다.
 
+<Method>
+[3.1 The BUCTD framework]
+- bounding box 정보를 사용하는 대신에, bottom-up 과정을 기반으로 만들어진 이미지를 top-down의 입력값으로 사용한다는 것이 가장 큰 차이점이다.
+- stage 1: BU(Bottom-Up detector) bottom-up 방식을 활용하여 감지기를 만들었는데, 이는 object detector를 별도로 학습시키는 것이 때로는 더 많은 연산량을 요할때가 있기 때문이다.
+- BU를 사용하여 예측 결과를 제시하고, 이는 bounding box와 사이즈가 일치한다.
+- Stage 2: CTD(Conditional Top-Down) 방식은 총 2가지 sampling을 사용한다.
+- Empirical sampling은 BU모델에서 예측한 값을 가져오는 것이다. 
+- Generative sampling은 실제 예측값이 아니라 생성된 임의의 값을 사용하는 것이다.
+
+[3.2 CTD model architectures]
+- BUCTD의 flexibility를 묘사하고자 한다.
+- 우리는 모든 conditional input을 사용하고, 가우시안 표준편차기반의 3채널의 히트맵을 사용한다.
+- semantic information을 유지하기 위해서, RGB값에 적정한 keypoint를 제공한다.
+
+[3.2.1 CTD with preNet]
+- 총 두개의 입력값(이미지, bottom-up 기반의 키포인트 정보)을 병렬적으로 이용하기 위해서, 두개의 서로 다른 convolution layer를 사용한다.
+- 그리고, 이미지의 feature와 condition feature를 HRNet의 입력값으로 이용한다.
+
+[3.2.2 CTD with TransPose]
+- TransPose를 수정했는데, TransPose는 CNN을 backbone으로 하고 있고, 여기서 추출된 feature를 1 * 1 convolution으로 변환시킨다.
+- 우리는 condition을 "side-information"이라는 형태로 제공하는데, 이는 condition specific toekn을 concaten한것이다.
+- Attention layer는 conditional input과 predicted keypoints간의 long-range-realtionships 을 더 잘 캡쳐 가능하게 한다.
+
+[3.2.3 CTD with a Conditional Attention Module]
+- conditional input이 CTD모델에서 집중해야 할 부분을 볼 수 있게 하는 뒷받침이 된다.
+- (2)는 bottom-up 모델에서 얻을 수 있는 pose 정보를 제공한다.
+- 마지막으로, sub-module을 사용하여 feature들을 통합시킨다.
+- sub-module에서는 HRNet의 long-range contextual information과 모델의 feature map 이 주어지는 입력값의 feature map의 정보를 추가로 제공 가능하게 한다.
+
 <논문 본론>
 
   
