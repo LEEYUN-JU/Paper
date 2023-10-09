@@ -64,20 +64,26 @@
 - 마지막으로, sub-module을 사용하여 feature들을 통합시킨다.
 - sub-module에서는 HRNet의 long-range contextual information과 모델의 feature map 이 주어지는 입력값의 feature map의 정보를 추가로 제공 가능하게 한다.
 
-<논문 본론>
+[3.3 Implementation & training details]
+- BUCTD with preNet : HRNet-W32 혹은 W48을 기본 모델로 사용하고, 이는 animal 포즈, CrowdPose and COCO에서 좋은 성능을 보여주었다.
+- BUCTD with TransPose : top-down 방식을 효율적으로 사용할 수 있는지에 대해서 검증하고자 사용함
+- BUCTD with CoAM : HRNet-W32, W48, with CoAM 을 모든 benchmark에 대해서 진행하였다.
+- Training Details : 고정된 margin(여기서는 25)를 더해줬는데, bounding box를 예측하는 경우에 사용했고, animal dataset에만 사용했다.
+- 사람 데이터 셋에는 마진을 5 로 설정한 bounding box를 사용했다.
 
-  
-<지적된 기존 문제>
-
-<제시하는 해결 방법>
+<4.Experiments>
+- 다양한 데이터 셋을 가지고 실험해봄~
+- Hybrid approaches 인 MIPNet보다 좋은 성과를 거둠~
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-
-- 
+- Hybrid approaches : top-down 이랑 bottom-up을 섞어서 사용하는 경우를 말하는 듯? 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
-
-<참고한 블로그>
+- Top-down 방식과 bottom-up 방식을 합친것보다 성능이 좋댜? ㅜ 정도로 사용 가능할듯?
+- 최신 pose estimation trend 중에 하나로 내세울 수 있을 것.
 
 <논문 요약>
-
+- top-down 방식과 bottom-up 방식을 합친 pose estimation 을 제안하고자 한다.
+- top-down 방식의 경우, boudning box에 지나치게 의존한다는 점이 있는데, 이때 사용되는 bounding box를 detecotr를 활용하는게 아니라, bottom-up 방식으로 우선적으로 모든 keypoints를 찾아낸 다음에, 그것을 기반으로 새로이 bounding box의 범위에 제한을 둔 후에, 이를 사용하여 box를 새로이 만든다.
+- 기존 방식의 경우, pose estimation 모델보다, bounding box를 찾는 detector모델을 학습시키는데 시간이 더 오래 걸렸는데, 본 방식의 경우 detector를 사용하지 않기 때문에 훨씬 효율적이다.
+- pose estimation 뿐만 아니라 동물의 자세 또한 추정 가능하다.
