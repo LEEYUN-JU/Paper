@@ -1,0 +1,37 @@
+<Abstract>
+- 기존의 많은 Human pose estimation 분야에서, 정확도와 효율성을 높이기 위해서, transformer 구조를 많이 사용했지만, 이는 temporal relation만 고려한다는 점과, dot produt self-attention caculation이 복잡하다는 단점을 가지고 있으며, 이는 embedding size에 비례한다는 단점이 있다.
+- 이에, synthesized spatial and temporal attention을 믹싱하고, 우리 모델은 inter-joint와 inter-frame을 포함함으로써, 전체 비디오에서 사람의 자세를 더 잘 추정할 수 있게 해준다.
+
+<Introduction>
+- pose estimation은 지나치게 keyframe에 의존하는 경향이 있다.
+- feature extracted from inputs 된것에서 좋은 것을 골라야 한다.
+- ViT에서 self-attention mechanism 을 사용하여, 좋은 성능을 보여주었지만 이는 비약적으로 사이즈가 크다.
+- 이를 해결하기 위해서 본 논문에서는 linear layer를 통해 attention weights을 생성하는 standard key-query attention을 사용하고자 한다.
+- 우리는 우리의 모델을 MixSynthFormer라고 이름 붙였으며 contribution은 다음과 같다.
+- 1) keyframe 기반의 효율적인 pose estimation 모델을 생성했다.
+- 2) MLP 기반의 mixed synthetic attention matrix generation module을 사용했으며, 본 module이 하는 것은 spatially 그리고 temporally하게 attention matric을 생성하는 것이다.
+- 이러한 디자인은 우리 모델이 channel-wise 그리고 token-wise 기반의 feature들을 다이나믹하게 합칠 수 있게 해주며, 자세를 효율적으로 구성한다.
+- 연산량을 줄이기 위해서, attention matrix generation을 사용한다.
+- 3) 우리는 2D 뿐만 아니라 3D pose estimation도 가능한 모델을 설계했다.
+
+<Related Work>
+- 
+
+<논문 본론>
+
+  
+<지적된 기존 문제>
+
+<제시하는 해결 방법>
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- intro가 쓸만하군. 자세 추정을 어느 분야에서 사용 가능한지, 현황에 대한 얘기.
+
+<참고한 블로그>
+
+<논문 요약>
+
