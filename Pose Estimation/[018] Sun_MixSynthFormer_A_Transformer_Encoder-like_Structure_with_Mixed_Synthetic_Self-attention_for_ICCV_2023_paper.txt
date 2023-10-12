@@ -15,6 +15,13 @@
 - 3) 우리는 2D 뿐만 아니라 3D pose estimation도 가능한 모델을 설계했다.
 
 <Related Work>
+[2.1 Human Pose Estimation]
+- Human pose 모델은 두가지 타입으로 분류되는데, 하나는 frame-by-frame 이고 다른 하나는 keyframe 기반의 추정 방식이 있다.
+- frame-by-frame방식으로 자세를 추정하는 경우에는 너무 많은 연산량을 요하기 때문에 비 효율적이다.
+- 게다가 이러한 방식은 occlusion 되는 경우에 매우 민감하게 반응한다.
+
+[2.2 Motion Completion and Prediction]
+- motion completion 의 목표는 특정 키 프레임에서 사라진 관절을 찾아내는 것이다.
 - 
 
 <논문 본론>
@@ -25,11 +32,12 @@
 <제시하는 해결 방법>
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-
-- 
+- body recovery 라는 분야가 있는지 찾아보기 
+- cubic-spline : 주어진 두 점을 다항식으로 매끄럽게 연결하는 방법
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - intro가 쓸만하군. 자세 추정을 어느 분야에서 사용 가능한지, 현황에 대한 얘기.
+- occlusion 상황에 대해서 언급했기 때문에 사용 가능할 듯. 2.1 HPE에서 언급함.
 
 <참고한 블로그>
 
