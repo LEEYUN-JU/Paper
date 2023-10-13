@@ -22,6 +22,20 @@
 
 [2.2 Motion Completion and Prediction]
 - motion completion 의 목표는 특정 키 프레임에서 사라진 관절을 찾아내는 것이다.
+- motion prediction은 future motion을 생성해 내는 것이고, 이때 오로지 과거 프레임에 대한 정보만 주어진다.
+- motion completion과 motion prediction의 유일한 차이는 키 프래임의 제한에 있다.
+
+<Method>
+[Problem Definition]
+- 감지된 자세가 복잡하거나 폐색 현생이 발생한 경우에는, 추정된 자세를 신뢰할 수 없다.
+- 샘플링된 프레임안에서 목표로 하는 자세를 추정하는 것을 목표로 한다(???)
+
+[Model Overview]
+- MixSynthFormer는 정확한 자세 추정을 위해서 recover하는 것이 목표이다.
+- 이렇게 복원된 자세들은 linear projection에 사용되는 트랜스포머에 임베딩 되고, MixSynthEncoder의 L Block에 들어가게 된다.
+- 다음으로는 MixSynth Attention에 대해서 자세하게 소개하고자 한다.
+
+[Design of MixSynthFormer]
 - 
 
 <논문 본론>
