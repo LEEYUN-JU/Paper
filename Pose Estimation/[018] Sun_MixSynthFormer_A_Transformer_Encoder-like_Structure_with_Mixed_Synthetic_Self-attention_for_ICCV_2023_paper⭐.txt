@@ -1,3 +1,5 @@
+⭐논문 내용이 transformer 구조를 완전히 이해하지 않는 이상 알기 힘든 내용이다. 나중에 시간이 되면 다시 한번 읽어보자.⭐
+
 <Abstract>
 - 기존의 많은 Human pose estimation 분야에서, 정확도와 효율성을 높이기 위해서, transformer 구조를 많이 사용했지만, 이는 temporal relation만 고려한다는 점과, dot produt self-attention caculation이 복잡하다는 단점을 가지고 있으며, 이는 embedding size에 비례한다는 단점이 있다.
 - 이에, synthesized spatial and temporal attention을 믹싱하고, 우리 모델은 inter-joint와 inter-frame을 포함함으로써, 전체 비디오에서 사람의 자세를 더 잘 추정할 수 있게 해준다.
@@ -36,24 +38,48 @@
 - 다음으로는 MixSynth Attention에 대해서 자세하게 소개하고자 한다.
 
 [Design of MixSynthFormer]
-- 
+- 우리의 프레임 워크에서 제안하는 것은 recover-refine 방식이다.
+- 우리는 MixSynthFormer를 디자인했는데, 이는 기존의 transformer방식을 따르지만 self-attention 모듈을 제외한 나머지를 사용한다.
+- attention layer는 transforer encoder에서 position embedding을 위해서 필수적이지만, MLP 기반의 MixSynth Attention은 다른 토큰들에 매우 민감하기 때문에 굳이 position embedding을 위한 layer가 필요하지 않다.
+- 최종적으로 얻어지는 pose sequence는 MixSynthEncoder 와 noisy pose에서 복원된 부분의 합이다.
 
-<논문 본론>
+[MixSynth Attention]
+- global 그리고 local feature를 위해서, spatial 그리고 temporal synthetic attention matrices 을 섞었다. 
+- 이는 relative interjoint 와 inter-frame importance를 섞은 weight이다.
+- 다른 것들은 inter-frame의 관계에 영향을 많이 받는 것에 비해, inner joint의 경우 특정 동작에서 매우 중요하게 작용한다. (frame 보다 joint를 잘 추정하는것이 중요한 이유를 설명하고자 하나봄)
 
-  
-<지적된 기존 문제>
+[SynthAttention Operation]
+- embedding size의 연산량을 줄이기 위해서 우리는 SynthAttenOp를 제안하고자 한다.
+- 차원 축소를 진행한다는 것.
+- 입력값이 주어지면, linear > SElayer > Softmax 순서로 차원을 축소시키고, 다른 branch에서는 linear만 사용한 다음에, output으로 넘겨줄때에 앞서 가져온 결과를 concate 해 주는 것 같다.
+- 여기서 핵심은 SElayer이다.
 
-<제시하는 해결 방법>
+[Efficiency Calculation]
+- 모델 복잡도를 줄여서 연산 속도를 향상시켰다.
+
+[Loss Function]
+- L1 loss 를 사용했다.
+
+[Motion Prediction Setting]
+- Motion prediction 과 motion completion은 conditional motion generation의 sub field 에 해당하는 연구이다.
+- 우리는 short-term predcition을 sub-task로 고려하고 있다.
+- historical ground-truth에 의존하여 feature를 예측하는 경향이 있다.
+- future pose estimation을 위해서 우리는 L-2 norm를 사용하였다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - body recovery 라는 분야가 있는지 찾아보기 
 - cubic-spline : 주어진 두 점을 다항식으로 매끄럽게 연결하는 방법
+- inter-joint : 주요 관절과 관절을 연결해 주는 부분
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - intro가 쓸만하군. 자세 추정을 어느 분야에서 사용 가능한지, 현황에 대한 얘기.
 - occlusion 상황에 대해서 언급했기 때문에 사용 가능할 듯. 2.1 HPE에서 언급함.
+- occlusion recover 방식에 대해서 언급했기 때문에, 뒷받침으로 넣을 것.
+- SELayer : Squeeze-and-Excitation layer
 
 <참고한 블로그>
 
 <논문 요약>
-
+- attention 기반으로 feature에 가중치를 두어서 학습한다.
+- SElayer를 사용하여 channel-wise한 특성을 살릴 수 있도록 한다.
+- 여러가지 예측 가능한 자세를 생성하고, 생성된 자세와 정답간의 차이를 측정한다.
