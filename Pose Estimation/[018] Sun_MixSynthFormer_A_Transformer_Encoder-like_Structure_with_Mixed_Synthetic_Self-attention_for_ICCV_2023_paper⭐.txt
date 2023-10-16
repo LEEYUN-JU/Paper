@@ -1,4 +1,5 @@
 ⭐논문 내용이 transformer 구조를 완전히 이해하지 않는 이상 알기 힘든 내용이다. 나중에 시간이 되면 다시 한번 읽어보자.⭐
+!!! Video Prediction!!!
 
 <Abstract>
 - 기존의 많은 Human pose estimation 분야에서, 정확도와 효율성을 높이기 위해서, transformer 구조를 많이 사용했지만, 이는 temporal relation만 고려한다는 점과, dot produt self-attention caculation이 복잡하다는 단점을 가지고 있으며, 이는 embedding size에 비례한다는 단점이 있다.
@@ -65,6 +66,25 @@
 - 우리는 short-term predcition을 sub-task로 고려하고 있다.
 - historical ground-truth에 의존하여 feature를 예측하는 경향이 있다.
 - future pose estimation을 위해서 우리는 L-2 norm를 사용하였다.
+
+<Ablation Study>
+- 보통 input sequence에서는 키 프레임 poses 들에서 linearly interpolated한다.
+- (키가 나타나면, 이들간의 연결을 linearly interpolate한다는 의미인듯?)
+
+[Attention Matrix Generation]
+- 본 모델에서는 linear layer를 생성하는 경우에 SELayer를 사용한다.
+- FPN에 의해서도 생성 가능하고, learnable matrix에서도 생성 가능하다.
+- 우리의 generation model은 self-attention 모델과 비교하였다.
+
+[Effect of Reduction Factor]
+- 
+
+[Compoenents in mixSynth Attention Block]
+- 
+
+[Conclusion]
+- flexible model design이 자세 예측을 용이하게 했다.
+- 포괄적인 실험을 통해 다양한 분야에도 사용 가능하다는 것을 알아냈다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - body recovery 라는 분야가 있는지 찾아보기 
