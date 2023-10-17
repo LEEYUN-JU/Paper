@@ -1,0 +1,26 @@
+<Abstract>
+- 본 논문은 3d pose estimation 하는 경우에, 폐색 현상으로 인해서 어려움을 겪는 문제를 해결하고자 제시하는 것이다.
+- 이에 이 문제를 해결하고자 우리는 SMPL(Skinned Multi-Person Linear) Edge Feature Distaillation (SEFD)을 제시하고자 한다. 
+- 본 방식은 edge를 검출하는 방식으로, 본 논문의 baseline과 비교하였을때 모델의 사이즈가 크게 차이나지 않는다.
+- 2D 이미지를 입력으로 받아서 3D mesh pose를 결과값으로 return 하는 모델이다.
+
+<Introduction>
+
+
+<논문 본론>
+
+  
+<지적된 기존 문제>
+
+<제시하는 해결 방법>
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+
+<참고한 블로그>
+
+<논문 요약>
+
