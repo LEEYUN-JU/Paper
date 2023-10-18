@@ -1,0 +1,29 @@
+<Abstract>
+- 본 논문에서 집중적으로 보고자 하는 것은 multi-person end-to-end 자세 추정시에 발생하는 문제에 대해 연구하고자 한다.
+- 현재 달성된 sota모델에서는 DETR-like 프레임 워크를 채택했으며, 복잡한 decoder구조를 가지고 있다는 특징이 있다.
+- 우리는 단순한 transformer 기반의 방법을 제시하고자 한다.
+- self-attention 모듈을 두개의 subsequent group으로 나누었다.
+- 1) N within-instance self-attention 쿼리와, K 개의 keypoints 쿼리
+- 2) (K+1)개의 same-type across-instance self-attention, 같은 유형의 N개의 쿼리
+- 디코더는 최종적으로 across-instance type-different 쿼리를 통해 interaction에 해당하는 부분을 제거한 결과를 내놓고, 이를 통해 성능을 향상 시킬 수 있었다.
+
+<Introduction>
+
+
+<논문 본론>
+
+  
+<지적된 기존 문제>
+
+<제시하는 해결 방법>
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+
+<참고한 블로그>
+
+<논문 요약>
+
