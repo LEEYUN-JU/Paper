@@ -1,0 +1,23 @@
+<Abstract>
+- semi-supervised 2D human pose estimation에 대한 새 모델을 제시하고자 한다.
+- 1 ) 큰 모델과 light weight모델을 동시에 사용하는 경우, light weight모델이 guide를 제시한다.
+- 2 ) pseudo label이 지니고 있는 부정적인 부분이 있다.
+- 2D human pose의 경우 label 이 매우 복잡한데, 이는 키포인트 카테고리와, 키포인트 포지션을 동시에 포함하고 있기 때문이다.
+- 위에서 언급한 문제 1, 2를 해결하기 위해서 SSPCM을 제안하고자 한다.
+- 모순성을 계산하고, 아웃라인을 제거하는 두 개의 teacher모델로부터 생성된 pseduo label을 사용하는 방법을 소개하고자 한다.
+- 두 개의 teacher모델은 서로 상호작용하게 되며, 학생 모델은 업데이트된 pseduo label을 사용할 수 있다.
+
+<Introduction>
+
+
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
