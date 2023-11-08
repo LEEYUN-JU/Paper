@@ -8,14 +8,40 @@
 - 두 개의 teacher모델은 서로 상호작용하게 되며, 학생 모델은 업데이트된 pseduo label을 사용할 수 있다.
 
 <Introduction>
+- HPE는 action recognition이나 3D pose estimation 의 가장 토대가 되는 중요한 연구이다.
+- 여전히 데이터가 부족하고, 라벨링하는데 많은 자원이 소모된다.
+- 라벨링 되어있는 적은 데이터로 라벨링 되어 있지 않은 다른 데이터를 어떻게 모델에서 잘 활용가능하도록 하는지가 관건이다.
+- 현재 2D HPE sota 모델은 consistency learning을 기반으로 하고 있으며, 이는 서로 다른 결과값에서의 유사성을 측정하는 것인데, 이는 붕괴를 일으킬 수 있다.
+- 붕괴가 일어나는 이유는, back-ground를 잘못 분류하는 경우가 생기기 때문이다.
+- 현재 sota 모델은 위와같은 현상을 easy augmentation 과 hard augmentation으로 나누어서 해결하였다.
+- hard augmentation에서 발생하는 collapse 현상을 학습하게 하였고, 이는 EMA가 아닌 Dual Network라고 불리우는 방법을 통해 지속적으로 업데이트 하게 하였다/
+- 기존에 존재하던 모델들에는 두가지 단점이 있는데, 하나는 large model 은 teacher, lightweight 모델은 student 모델이라는 것이다. 
+- 이때문에 EMA를 사용하여 teacher model을 업데이트 하는데 어려움을 겪었다.
+- 두 번째는, 잘못 만들어진 noise label이 모델이 학습하는데 혼동을 가져다 주고, student 모델이 잘못 만들어진 label에 overfiting 되는 경우이다.
+- 이를 방지하기 위해서 confidence label이 사용되었다.
+- 동일한 대상에 대한 예측 결과가 각기 상이한 경우일 수록 성능이 하락한다는 결과를 얻었다.
+- 이를 해결하기 위해서 별도의 teacher모델을 설정해 준다.
+- 같은 모델일지라도, 예측한 것이 항상 다르기 때문에, 본 논문에서는 다른 keypoints간의 차이를 이용하였다.
+- inconsistency 한 값도 포함하도록 하여, 최종적으로 모델이 이를 완전히 배제할 수 있도록 하였다.
+- 본 논문에서의 contribution 은 다음과 같다.
+- 1) semi-supervised 2D HPE를 제안하고, teacher & student 구조로 된 모델을 제시한다.
+- 2) student의 성능을 높이기 위해서 Cut-Occlude 기반의 pseudo keypoint 예측 (SSCO)를 사용하여 예측하기 힘들지만 의미히 있는 sample을 생성해내는 것이다.
 
+<Related Work>
+[2D human pose estimation]
+- top-down 이 있고 bottom-up 이 있으며 그것에 대한 설명~
+- 2D HPE에서는 데이터 셋을 만드는데 cost가 매우 크며 어렵다~
+- HR Net이랑 Higher HRNet에 대한 설명~
 
+[Semi supervised learning SSL]
+- semi-supervised learning은 작은 labeled 데이터를 가지고 많은 양의 unlabeled data를 학습시키는 모델이다.
+- 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
-- 
+- 동일한 대상에 대한 예측 결과가 각기 상이한 경우일 수록 성능이 하락한다는 결과를 얻었다.
 
 <참고한 블로그>
 
