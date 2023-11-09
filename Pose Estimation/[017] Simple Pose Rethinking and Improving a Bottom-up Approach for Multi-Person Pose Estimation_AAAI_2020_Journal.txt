@@ -1,0 +1,20 @@
+<Abstract>
+- 1) 키 포인트 간의 연결 정보를 인코딩 하고
+- 2) 개선된 stacked hourglass network 를 attention mechanism을 접목한걸 사용하고
+- 3) novel focal L2 loss를 사용하는데, hard keypoint를 감지하는데 사용한다
+- 4) 감지된 robust한 greedy keypoint들을 개별의 포즈로 그룹핑 하기 위해서  signment algorithm을 사용했다
+- 우리가 제안하는 모델을 15%이상의 성능을 높였을 뿐만 아니라 매우 직관적이고 단순하다.
+
+<Introduction>
+- 
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
