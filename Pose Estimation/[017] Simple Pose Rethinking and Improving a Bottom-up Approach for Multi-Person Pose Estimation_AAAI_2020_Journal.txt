@@ -6,12 +6,30 @@
 - 우리가 제안하는 모델을 15%이상의 성능을 높였을 뿐만 아니라 매우 직관적이고 단순하다.
 
 <Introduction>
+- multi-person pose estimation에서 어려운 부분은, 주어진 이미지 내에서 keypoints를 찾아내는 것이다. 
+- 해당 분야에서 CNN을 발전시키면서 좋은 성능을 거두게 되었다.
+- pose estimation은 크게 두 가지 방법이 있는데, 하나는 top-down이고 다른 하나는 bottom-up이다.
+- 2016년도에 Sota를 달성한 SSD는 처음에 주어진 이미지를, crop한 다음에 single person을 찾는 task를 수행하였다.
+- 대조적으로, bottom-up 방식에서는, 직접적으로 keypoint를 찾고, 이를 연결해주는 방법을 사용했다.
+- top-down 방식은 cost 가 많이 드는 것에 비하면 그다지 좋은 성능을 가지고 있지 않다.
+- top-down 방식에 비해 bottom-up 방식은 사람을 감지하는데 있어서 좀 더 효율적이다.
+- bottom-up 방식의 경우 real-time에서 감지된 keypoint를 grouping 하는 것이 가장 큰 과제이다.
+- CMU-Pose는 bottom-up 방식 기반, real-time multi-person pose estimation 서 처음으로 매우 좋은 성능을 보여준 논문이며, 본 논문은 CMU-Pose를 baseline으로 한다.
+- 본 논문의 contribution은 다음과 같다.
+- 1) joint association (named as Part Affinitye Fields PAFs)dml encoding을 다른 관점에서 보고자 하였으며, body parts에 대한 resonable하면서 simple한 방법을 제안하고자 한다.
+- 2) high-res와 high-quality heatmap을 이용하여, 향상된 stacked hourglass network with attention mechanism을 제안한다.
+- 3) 네트워크가 "hard" sample을 학습할 수 있도록 novel loss 를 디자인하였다.
+- 4) greedy keypoint assignment algoritm을 발전시켰다.
+
+<Related Work and Rethinking>
+[Single Person Pose Estimation]
 - 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- top-down의 cost에 비해 성능이 낮은점을 지목했음. -> 그럼에도 불구하고 top-down으로 좋은 성능을 낼 수 있다는 것을 보여주기.
 - 
 
 <참고한 블로그>
