@@ -18,9 +18,9 @@
 - 첫 번째 그룹의 "self-attention"은 "N" 개의 병렬 self-attentions로 구성되며, 각 self-attention은 "K" 개의 keypoint queries와 해당 인스턴스 쿼리를 가지고 있습니다. 이것은 운동학적 관계를 활용하고 예측된 포즈에 대한 정보를 수집하기 위한 것입니다. 여기서 "N"은 인스턴스의 수, "K"는 각 인스턴스의 키포인트 쿼리 수를 나타냅니다.
 - 두 번째 그룹의 "self-attention"은 이전과 같이 "K + 1" 병렬 self-attentions로 구성되며, 각 self-attention은 "N" 개의 동일한 유형의 쿼리를 가지고 있습니다. 이는 예측 정보의 중복을 수집하기 위한 것으로 원래 DETR에서 사용되던 self-attention과 유사합니다.
 - 두 개의 self-attention 은 두 종류의 상호작용을 찾아내기 위함이다.
-- (1) K개의 키포인트 쿼리 와 one instance 쿼리의 상관관계를 within N 만큼 찾아내는 것
-- (2) (K+1) across-instance 상호작용인데 이는 같은 타입이며 N개의 쿼리에 걸쳐있다. (?)
-- (3) 다른 type 들에 대해 across-instance 를 상호 적용하고자 한다
+- (1) K개의 키포인트 쿼리 와 one instance 쿼리의 상관관계를 within N 개 내로 찾아내는 것
+- (2) 같은 유형의 n개의 쿼리에 대한 (K+1)개의 across-instance 상호작용. (nose keypoint 쿼리 혹은 instance query)
+- (3) standard self-attention 내에서, 다른 타입들의 쿼리에 대한 추가 상호작용은 직접적으로 영향력은 없지만, optimization을 쉽게 만들어주기 때문에 성능 향상에 도움이 된다.
 - 즉, 본 논문에서는 두 개의 interaction을 두 개의 subseqent group self-attention을 사용해 분리하고자 한다.
 - 특히 같은 종류이며, 쿼리가 같은 사람에게 국한되었을때 정보를 찾는 경우에 한해서.
 
