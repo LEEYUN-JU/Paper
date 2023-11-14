@@ -23,6 +23,37 @@
 
 <Related Work and Rethinking>
 [Single Person Pose Estimation]
+- 기존에 존재하는 방법들은 pose estimation의 그림 구조에 태클을 걸었다. (2009)
+- 수작업으로 작성된 keypoint 들을 feature로 삼아서 자세를 추정한다고 한다. (2018)
+- 본 논문에서는 CNN기반으로 자세를 추정하고자 한다.
+- DeepPose의 경우 CNN을 처음으로 사용했으며, joint를 직접 예측하는 모델이다. (2014)
+- 키포인트 localization 문제를 두가지의 관점에서 보는데, (1) binary classification(0 or 1), (2) regression of offset vector to the nearest keypoint로 해결하고자 한다.
+
+[Multi-person Pose Estimation]
+- 대부분의 sota 모델은 top-down 방식을 채택하였다. (CPN, HRNet ...)
+- 사전에 이미 학습된 person detector가 있기 때문이다.
+- 하지만, 지나치게 person detector에 의존한다는 단점과, two-stage라는 단점이 있다.
+
+- bottom-up 방식의 경우에는, human detector에 의존하지 않고, keypoint를 찾는데 좀 더 효율적이다.
+- 하지만 정확도가 좋지 않다.
+- 그 이유로는, 너무 크거나 너무 작은 사이즈의 사람이 이미지 내에 있는 경우, 감지하기가 힘들다.
+- 두번째로, 정답과 근소하게 차이나는 위치를 keypoint라고 예측해도 평가하는 경우에는 틀렸다고 책정한다.
+
+[Some Rethinking]
+- pose estimation에서 scale의 다양성은 매우 중요한 부분을 차지한다.
+- 이미지 피라미드 (multi-scale search) 기법은 가능한 다양한 스케일내의 pose estimation을 테스트 하기 위해서 사용된다.
+- 하지만 네트워크 자체는 훈련 도중에, 작은 스케일에 국한하여 자세를 추정하게 된다.
+- 고화질의 feature map은 정확한 keypoint localization을 위해서 매우 중요하다.
+- 이미지 feature map size와 feature map resizing에 의해 발생하는 precision loss를 방지하기 위해서, 통합적으로 pose regression을 실행하는 것은 좋은 방법이다.
+- 기존 연구에서 정보 연결을 위한 encoding에 상당히 집중하고 있다는 것을 알 수 있다.
+- 제한된 space내에서 joint association에 관한 encoding을 수행하기 위해, Part Affinity Fields를 사용하고자 한다.
+- 또 다른 문제로 언급되는 것은 positive sample과 negative sample의 양의 차이와, hard sample 과 easy sample간의 양의 차이이다. 
+- heatmap을 살펴보면, background에 해당하는 부분들은 대부분 zero가 된다. 
+- 그리고 아주 극 소수의 부분만이 gaussian distribution(forground)을 통해 heatmap에 사용된다.
+- 따라서, gaussian을 통해서 적절하게 foreground와 background의 비율을 조정해주어야 한다. (feature map의)
+- 조정해 주어야, hard sample이나 easy sample어느 한쪽으로 치우쳐서 학습하는 것을 방지할 수 있다.
+
+<Our Approach>
 - 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
@@ -30,7 +61,8 @@
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - top-down의 cost에 비해 성능이 낮은점을 지목했음. -> 그럼에도 불구하고 top-down으로 좋은 성능을 낼 수 있다는 것을 보여주기.
-- 
+- "hard" keypoints 라는 단어를 씀. (occlusion 된 포인트를 지칭함)
+- background에서 자세 추정에 불필요한 부분을 포함하고 있다는 것.
 
 <참고한 블로그>
 
