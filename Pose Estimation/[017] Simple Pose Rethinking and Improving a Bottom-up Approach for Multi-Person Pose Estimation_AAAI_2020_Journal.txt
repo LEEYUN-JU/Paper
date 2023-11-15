@@ -54,17 +54,100 @@
 - 조정해 주어야, hard sample이나 easy sample어느 한쪽으로 치우쳐서 학습하는 것을 방지할 수 있다.
 
 <Our Approach>
-- 
+- 본 논문에서 제시하는 방법은 총 3가지 이다. 
+- 1) 이미지 내의 모든 사람에 대한 key point heatmap을 예측하고, body part에 해당하는 heatmap을 예측한다
+- 2) 후보 keypoints와 NMS를 통해 추려진 body parts에 해당하는 heatmap을 추측한다
+- 3) 추출된 포인트를 개별 포즈로 변경한다.
+
+[Definition of Heatmaps]
+- keypoint 또는 body parts 중심으로 gasussian response를 낮춰서, 정규화 시키고, 모델이 피쳐를 더 잘 학습 가능하도록 하였다.
+- 정규화되지 않은 gaussian 분포를 넣어서, ground truth 를 만들어 냈다. 
+- 본 논문에서 말하는 body parts는 keypoint를 연결해주는 adjacent부분을 지칭한다.
+- human skeleton에서 추출한 visual pattern과 keypoints간의 information connection 을 위해서 body parts가 사용된다.
+- 가려지는 부분들이 있기 때문에, 가려진 부분에는 타원을 그려서 대략적으로 추정 가능하게 했다.
+- 2017년에 발표된 논문에서는 2D vector field에 관한 것으로, limb을 잘 추정 가능하도록 하였다.
+- main body part에 근접해있는 keypoint들은 confidence 값이 높게 측정되지만, body parts에서 멀리 있는 것들은 그렇지 않다.
+- 본 논문에서 제시하는 방법은 PAF에서 encoding에 사용되는 것의 반만 있으면 사용 가능하여, 모델의 복잡도를 낮췄다.
+- 모델 학습 중에 single loss는 네트워크가 유사한 visual pattern과 같은 formulation을 공유 가능하도록 한다.
+- 분산은 gaussian peaks를 적절하게 foreground pixel과 background pixel로 나눈다.
+- hyper-parameter는 ground truth의 경계선과, 정규화되지 않은 gaussian distrubution을 줄인다.
+
+[Network Structure]
+- CNN 모델 내에서 receptive fields가 크면 정확도가 향상되는 효과를 보인다.
+- detailed information은 finegrained 된 location을 위해서 필요하다는 말이 된다.
+- global 그리고 local feature를 위해서 hourglass netowrk는 각 키포인트에 대한 서로다른 정보를 받아들일 수 있도록 디자인되었다.
+- 본 논문에서는 hourglass network를 backbone으로 설정하였는데, 이는 Associate Embedding (AE)을 사용하는 multi-person pose estimation에 적합한 구조이기 때문인다.
+- IMHN(Identiy Mapping Hourglass Network)은 hourglass network를 기반으로 하는 경우에 좋은 성능을 보여주었다.
+- 이미지 내에서 감지된 사람이 어떠한 사이즈이든 적절하게 다 받아들이는 것이 가능하다.
+- stacked hourglass 모듈을 사용하기 전에는 twofold로 downsample 하여 사용해야 했다.
+- featuremap 사이즈가 매우 크고, hour-glass 모듈을 4개나 쌓아서 사용하는데, 이는, 신경망을 작은 규모에서 supervising 하면 각 관절과 신체 부위의 다중 스케일 구조 정보를 포착하도록 강제할 수 있기 때문이다.
+- heatmap의 화질이 낮으면, high-res layer에서 location을 refinement하는데 guide를 제공하게 된다.
+- certain scale에서의 feature map은 동일한 scale에서의 heatmap을 regress하기 위해서 사용되며, self-correlated성이 높은데, 이는 자세 구조 정보를 encoding 하고 있기 때문이다.
+- 2018년에 나온 SE block의 경우 다양한 scale 에서의 feature를 학습 가능하도록 설계되었고, 본 논문에서도 이를 사용하고자 한다.
+- IMHN에서는 identify mappint을 추가하였는데, 이는 feature map과 heatmap을 동일한 spatial로 extent하기 위함이다.
+
+[Loss Functions]
+- 기존에 사용되는 L2 loss의 경우에는 정답과 추정값 사이의 거리를 추정하기 위해서 사용된다.
+- IMHN에서의 각 단계에서는, K개의 keypoint heatmap과 P개의 body part heatmap이 총 5개의 서로 다른 scale로 추론된다.
+- 추정된 heatmap에서 나타나는 pixel value는 키포인트나 body part중 특정 카테고리를 나타내게 된다.
+- 각 stage에서 예측된 score map을 계산한다.
+- thre라는 threshold 값이 사용되는데, 이는 foreground와 background를 구별하기 위해서 사용되는 값이다.
+- alpha와 beta값도 사용되는데, 이는 easy sample에 대한 punishment factor를 감소시키기 위한 값이다.
+- alpha와 beta를 사용함으로써, 모든 training data를 적절하게 사용 가능하도록 한다.
+- eta는 keypoint heatmap과 body part heatmap간의 balance를 조정하기 위한 값이다.
+- 하이퍼 파라미터인 thre를 활용하여, mass of easy background pixels들을 제거하고자 한다. 
+- background와 foreground를 모델이 잘 분류해내어야, forground에 대해 feature를 더 잘 뽑아내게 된다.
+- 각기 다른 scale에 대한 balance를 나타내기 위한 lambda값이 사용된다.
+- 본 논문에서 제시하는 heatmap definition을 통해서, hard keypoints와 hard keypoint association을 더 잘 학습할 수 있게 되었다.,
+
+[Keypoint Assignment Algorithm]
+- 예측된 keypoint들은 body parts를 감지하기 위해서 주어지고, 감지된 body part는 human skeleton을 감지하기 위해서 사용된다.
+- NMS를 사용하여 예측된 heatmap을 keypoint후보군을 추리는데 사용한다.
+- adjacent keypoints들 사이에서 body part의 후보군을 정하고, confidence가 높은 것을 기준으로 점수를 계산한다.
+- 이때, gasussian response sampling을 사용한다.
+- 후보군으로 책정된 body part들은 책정된 score값에 따라서 내림차순 혹은 오름차순으로 정렬된다. 
+- global graph matching 을 해결하는 대신에, CMU-Pose에서는 greedy algorithm을 제안했다.
+- 본 논문에서의 keypoint assignment algorithem은 여러개의 simple coneection rule을 기반으로 한다.
+- 같은 connected keypoint를 공유하는 경우, 낮은 score의 body parts는 높은 score에 의해 자세 추정에서 제외하도록 한다.
+
+<Experiments>
+- 데이터 셋은 MS-COCO를 사용하였고, 평가 matric은 AP와 OKS를 사용했다.
+
+[Results and Analyses]
+- 실험 결과에 대한 설명중
+
+[Ablation studies]
+- focal loss L2의 경우 3~4%의 성능 향상을 보여주었다.
+- 실험 8, 11의 경우 hard keypoint와 body keypoint에 대해 더 좋은 결과를 보여주었다.
+- 3-stage를 기준으로 IMHN의 경우 5%의 AP향상을 보여주었다.
+- 4-stage를 기준으로 hourglass network가 더 좋은 성능을 보여주었다.
+- 입력 이미지와 feature map size가 크면 클수록 더 좋은 성능을 보여주었다.
+
+[Comparisons with the state of the art]
+- top-down의 경우 human detector에 의존하는 경향이 너무 크고, multi-person보단 single person인 경우에 성능이 좋다.
+- 본 논문에서 제안한 방법은 single scale이던 multi scale이던 좋은 결과를 보여주었다.
+- 기존 baseline에 비해 6.4%AP 가 증가하는 성능을 보여주었다.
+- 3-stage에서는 기존 CMU-POSE에 비해, 5.9 AP가 증가하는 것을 보여주었다.
+- 4-stage에서는 IMHN이 3-stage보다 1 AP증가했음을 보여주고 있다. 
+
+[Conclusions]
+- 본 논문에서는 bottom-up approch기반의 multi-person pose estimation을 하고자 했다.
+- 1) keypoint와 keypoint association의 hard sample에 대한 minimizing을 수행한다.
+- 2) high-res와 high-quality heatmap을 만들기 위해 powerful한 network를 사용한다.
+- 3) 성능을 높이기 위한 scale invariance across를 수행한다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-- 
+- PAFs (Part Affinity Fields) : 신체 부위간의 관계를 나타내기 위해 사용되는 개념, 각 관절을 연결하는 고유 벡터로 표현된다.
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - top-down의 cost에 비해 성능이 낮은점을 지목했음. -> 그럼에도 불구하고 top-down으로 좋은 성능을 낼 수 있다는 것을 보여주기.
 - "hard" keypoints 라는 단어를 씀. (occlusion 된 포인트를 지칭함)
 - background에서 자세 추정에 불필요한 부분을 포함하고 있다는 것.
+- background에서 자세 추정에 필요하지 않은 부분들을 제거하고자 한다는 것.
 
 <참고한 블로그>
 
 <논문 요약>
-
+- foreground와 background를 잘 구분하게 하는 것이 중요하다.
+- stacked hourglass 모델을 활용하였고, 각 stage에서 추출해낸 feature를 최대한 잘 활용하는 것을 목표로 하였다.
+- keypoint를 추출하고, 이를 다시 body part로 구분한 다음에, 최종적으로 fix된 body parts에서 pose estimation을 하는 것이 본 논문에서 제시하는 자세 추정 알고리즘 이다.
