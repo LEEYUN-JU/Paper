@@ -1,0 +1,33 @@
+<Abstract>
+- 차원 축소는 데이터 양이 많은 경우에 한해서 종종 진행되어 왔다.
+- 하지만 최근 SOTA모델들은 굳이 차원축소를 진행하지 않아도, 대용량 데이터를 처리 할 수 있게 되었다.
+- 그중에서도 VAEs는 unseen data를 생성하는 nonlinear latent representations을 학습하기 위해서 디자인되었다.
+- 본 논문에서는 4500명의 혈액 sample을 처리하기 위해서 VAE를 학습시키고자 한다.
+- global feature importance score를 사용해서 잠재적 차원이 별개의 cellular 과정을 나타낸다는 것을 보여주고자 한다.
+- 본 모델의 일반화 성능을 입증하기 위해서, 두 가지 타입의 당뇨병 데이터 셋과 급성 골수성 백혈병 그리고 조현병, 임상 실험을 하는 환자들간의 유의미한 상관관계를 찾아내었습니다.
+- 특히 VAE를 사용하는 경우 linear 하던 nonlinear하던 간에, 주성분 분석에 의해 도출된 latent dimension보다 더 좋은 효과를 보여주었습니다.
+- VAE는 생물학적인 의미, nonlinear, 그리고 최근의 방대한 데이터를 transferrable 하는데 의미가 있다는 것을 입증하였습니다.
+
+<Introduction>
+- 
+
+<Results>
+[VAE model construction and fitting]
+- 
+
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<새로운 단어>
+- cohort : 집단, 지지자
+- acute myeloid leukemia : 급성 골수성 백혈병
+- schizophrenia : 조현병
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
