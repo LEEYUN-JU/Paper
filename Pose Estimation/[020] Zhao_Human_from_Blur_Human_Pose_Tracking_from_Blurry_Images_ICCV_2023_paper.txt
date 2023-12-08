@@ -7,11 +7,46 @@
 - 흐림이 심각한 입력 이미지에서도 우수한 성능을 보여준다.
 
 <Introduction>
+- 이미지 내에서 dynamic을 이해하기 위해서 human motion은 매우 중요하다.
+- human motion estimation은 활용도가 매우 높은데, robot과의 collaboration, human-machine interaction, 등에 사용할 수 있다. 
+- 어려운 점은 사람의 동작이 너무 빠르거나, 화질이 좋지 않을때 발생하는데, 어떤 상황이든 이미지가 자세를 추정하기 힘들게 blurry된다는 것에는 변함이 없는 사실이다.
+- 우리의 목적은 이런 흐릿한 이미지에서 사람의 3D 자세를 추정하는 것이다.
+- RGB이미지로부터 RGB-D를 찾아내는 것은 있지만, 직접적으로 blurry 한 이미지를 다루는 방법은 우리가 처음이다.
+- 여태까지 이미지와 bluer된 이미지간의 joint를 연구한 적은 없었고, blurry image에 대한 dataset도 별도로 존재하지 않는다.
+- 본 논문의 contribution은 다음과 같다.
+- 1) blurry 이미지에서 자세를 추정한다.
+- 2) dataset을 만들고, 정확도를 측정가능한 evaluation metrics을 제안한다.
+- 3) 오로지 single frame만 가지고 가능하며, training data set으로부터 대량의 annotation을 요구하지 않는다.
+
+<Related Work>
+[3D human pose estimation]
+- SCAPE, SMPL 는 3D pose capture를 제안했다.
+- 2D keypoints나 실루엣에 영향을 받아서 사람의 자세를 추정하게 된다.
+- 주어진 RGB이미지내에서 model parameter를 조정하기 위해서 deep network를 사용했다.
+- SMPL body에 초점을 두기 위해서, optimization과 regression의 장점을 결합하여 사용하기도 했다.
+- 이렇듯 다양한 연구가 있지만, 여전히 blurry input을 다루는 연구는 미미하다.
+
+[Image and video deblurring]
+- blurring된 사람의 얼굴에만 초점을 둔 연구는 이미 진행되었다.
+- adversarial 한 접근을 통해서 image deblurring을 하고자 했고, human pose와는 살짝 거리가 있으며, sub-frame acc에 대해서는 recover하지 않는다.
+- 제안하고자 하는 방법은 Shape from Blur (SfB)에서 영감을 받았으며, 이는 test-time optimization을 3D shape을 복원하거나, 주어진 배경으로부터 simple rigid object를 복원하는 연구이다.
+- Motion from Blur (MfB)는 StB를 이용하여 multiple video frame을 복원하도록 구성된 모델이다.
+- 추가적인 input을 통해서 Blur method를 통해서 Animation을 만들어 낼 수 있다.
+
+<Method>
+- input에는 깨끗한 배경과, 블러 처리된 사람이 있는 이미지를 넣어준다.
+- output은 shape parameter B, texture image T, timestmp i에 따른 사람의 motion을 보여주는 sub-frame을 대표하는 세가지 함수로 되어 있다.
+- N은 number of subframe
+- 짧은 비디오에 대해서 super-resolution 을 N개의 프레임으로 만들어 낸다는 것이다.
+- 그들은 모두 낮은 차수의 다항식 집합으로 표현되며, 여기서 이동과 회전은 각각 네 개의 자유도를 가지고 있습니다(거리와 축의 각도를 가진 방향).
+- 이러한 다항식은 시간 순서대로 사람의 자세를 생성하며, 연속적이고, 서로 상이하고, 쉽게 초기화할 수 있다.
+- Human pose 그리고 shape representation은 SMPL human model을 따른다.
 - 
 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-- 
+- chronological : 발생한 시간 순서대로
+
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
 - 
