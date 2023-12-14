@@ -47,23 +47,102 @@
 - 사람의 외모에 대한 결과와 사람의 실루엣에 대한 결과 총 두가지를 반환한다.
 
 [Image formation model]
-- 주어진 정보를 바탕으로 image information model을 만든다.
+- 주어진 정보를 바탕으로 image formation model을 만든다.
 - 배경 이미지를 만들고, 블러 처리된 foreground 이미지를 생성한다.
 - alpha channel 은 모든 sub-frame 실루엣을 projection한 채널이다.
 
 [Loss terms]
-- 우리 연구에서 가장 중요한 것은 image information loss와 matting loss이다.
-- 
+- 우리 연구에서 가장 중요한 것은 image formation loss와 matting loss이다.
+- image formation loss는 재 구성되는 이미지가 input image와 가장 가까워지도록 한다.
+- matting loss는 alpha channel에서 추정된 초기값을 기준으로 실루엣을 구성한다.
+- 다른 로스들은 optimizer에 관여한다.
 
+[Image formation loss]
+- input image와 reconstruction이미지간의 MSE를 구하게 된다.
+
+[Matting loss]
+- image foramtion loss만 사용하는 경우에는, optimizer가 매우 어려워지게 되고, 주로 local minimum에 수렴하게 된다.
+- 따라서 subframe의 실루엣을 계산하는 loss를 추가해 주었다.
+- 초기의 alpha channel에서 추정되는 loss값은 pre-trained 된 Background-Matting-V2 model에서 가져왔고, 이는 blurry input이미지와, corresponding background에 영향을 받는다. 
+- IOU로 계산되고, alpha channel과 averaging 으로부터 계산된다.
+
+[Surface texture smoothness]
+- SMPL이 가지고 있는 UV texture는 근접 pixel 들에 대해서 상세히 정의되어 있지 않다.
+- 따라서 void area로부터 color를 예측하는 것이 어렵다.
+- 따라서 우리는 mesh faces neighborhood를 통해서 이 문제를 해결하고자 한다.
+- 최소한 한 프레임에 등장했으며, 기준 pixel을 바탕으로 8개의 근처 pixel을 골라서 mesh를 삼각형으로 생성하게 된다.
+- texture의 smoothness를 통해 RGB pixel의 다름의 정도를 표현한다.
+
+[Pose prior loss]
+- We import the pose prior loss from SMPLify-X
+
+[SMPL shape regularization]
+- We add norm regularization on the SMPL shape parameter β to avoid irregular human body shape as used in SMPL 
+
+[Polynomial regularization]
+- The polynomial coefﬁcients of the pose, translation, and rotation could be serialized into a matrix C ∈ R4d×(J+2), where d is the degree of the polynomial, and J is the number of joints in the SMPL model.
+- whole body translation 과 rotation은 이미 matrix C안에 포함되어 있고, 따라서 4(J+2)polynomials를 가지게 된다.
+- L1 loss랑 프로베니우스 놈을 사용한다. 
+- 말도 안되는 움직임을 제한하기 위해서 해당 regularization이 사용된다.
+
+[Background regularization]
+- 사람과 배경과의 거리는 필수 불가결적인것이라고 판단에, 이에 해당하는 loss를 추가해 주었다.
+
+[Adversarial short motion prior]
+- 입력으로 주어지는 blurry 이미지에는 불확실한 부분이 상당히 많이 존재한다.
+- 그리고 불확실성은 주로 모델이 학습하지 못한 자세로부터 추출된다.
+-  자세가 다르더라도, 각 관절별로 같은 동작이라고 인식될 수 있다.
+- 이를 해결하기 위해서 adversarial attack을 추가시켜 주었다.
+- adversarial model 은 두 가지로 구성되어 있는데, 하나는 unrealistic한걸 계산하는 부분이고, 다른 하나는 correction-generator로, realistic polynomial coefficients를 계산하는 것이다.
+- 총 4개의 loss function이 사용되었으며, discriminator는 binary cross entropy loss를 사용한다.
+- generation loss 중에 특히 reconstruction loss에 대해서는 3가지의 조건으로 구성되어 있다.
+- 첫째는 coefficient matrix로, correction-generator와 정답간의 L1 loss이다.
+- 둘째는 L2 loss로, 재구성된 자세와 정답 자세간의 loss이다.
+- 마지막으로, 각 joint들의 위치의 평균 에러(MPJPE)이다. (정답과 재구성된 자세간의)
+
+[Joint loss]
+- 최종적인 loss는 앞서 나열한 모든 loss를 다 더한값이 된다.
+
+<Multiple blurry images>
+- 우리의 방법은 비디오 안에서 dusdldms blurry image에서도 사용할 수 있다.
+- body shape과 texture가 같은 입력값으로 주어진다.
+- 영상속에서는 별도의 adversairal motion prior가 필요하지 않다.
+- smooth한 joint motion을 위해서, boundary restriction을 추가해 주었다.
+- timestamp 에 따라서 boundary restriction을 걸어 주었다.
+
+<Optimization>
+- ADAM을 사용함..
+
+[Initialization]
+- METRO human pose estimation method를 사용했다.
+- SMPL registration model을 활용하여 METRO 모델로부터 mesh를 생성한다.
+
+<Experiments>
+- baseline으로 SfB를 채택했다.
+- 해당 모델은 simple object를 sub-frame deblurring 하고 3D reconstruction을 위해서 디자인되었다.
+- AfB와 BIN모델과 우리 모델을 비교 모델로 채택했다.
+... 생략
+
+[Blur rate]
+- blur level이 중요하다(?)
+- sub frame 을 first silhouette으로 나누어서 계산했다.
+- 사람이 동작을 크게 해서 움직이게 되는 경우 blurr 처리 되는 부분이 상당히 늘어나게 된다.
+- 따라서이를 제한하기 위해 blur rate가 사용되었다.
+
+[Conclusion]
+- We proposed the ﬁrst method to reconstruct sub-frame human motion and textured shape from substantially blurred images.
+- 핵심 내용은 주어진 2D blur 이미지로부터 3D모델을 재 구성해 내는 것이다.
+- 본 논문에서 제시하는 핵심 방법은, image reconstruction loss이며, 이는 inverse problem with 표준 gradient descnet method를 통해서 풀었다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - chronological : 발생한 시간 순서대로
 
-
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
-- 
+- loss 계산을 1 - loss_alpha 로 처리하는 부분 참조해서 ratio loss 설정하기.
 
 <참고한 블로그>
 
-<논문 요약>
 
+<논문 요약>
+- loss를 상당히 많이 써서, 모델을 설계했다.
+- 모델 frame이 아니라, loss로 모델이 구성된다고 봐도 무방할 정도..
