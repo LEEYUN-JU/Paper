@@ -1,0 +1,44 @@
+<Abstract>
+- control policies를 학습하는 reinforcement learning이다.
+- 모델은 CNN이며, Q-learning으로 학습했고, 이는 raw pixel을 input으로 받아들이고 ouput으로 value function estimating future reward를 반환한다.
+- Atrari 2600 games를 사용하고, learning algorithm이나 아키텍쳐에 대한 adjustment는 사용하지 않았다.
+- 게임은 총 6개를 사용했고, 그 중에 3개는 사람의 실력을 뛰어 넘었다.
+
+<Introduction>
+- 대부분의 RL 모델들은 hand-crafted feature를 이용하며, linear value function이나 policy representation에 의존한다.
+- 최근 들어서 computer vision 이나 speech recognition 분야에서는 raw-sensory data로부터 high-level features를 추출해내는 것이 가능하다.
+- 이와 같이 RL에서도 sensory data를 활용하여 유사한 테크닉을 구현해낼 수 있다고 본다.
+- 딥러닝 관점에서 봤을때 여전히 RL은 도전적인 분야이다.
+- 다른 분야에서는 데이터를 기반으로 학습하는 반면, RL은 행동에 대한 reward를 기반으로 학습하기 때문에 느리고, noisy 하다.
+- supervised learning에서는 fixed 된 환경에서 학습하는 반면, RL은 선택지에 따라 다음 step 에 대한 결과나 값이 변하기 때문에 학습이 어렵다는 단점을 지니고 있다.
+- 본 논문은 이러한 단점을 지닌 RL 을 활용하여 control policies를 raw video data를 통해 학습시키고자 하는 것이 최종 목표이다.
+- 네트워크는 다양한 Q-learning 알고리즘을 통해 학습되었고, 이는 strochastic gradient descent를 사용한다.
+- correlated data와 non-stationary distribution을 완화시키기 위해서, experience reply mechanism 을 사용한다. 
+- 이는 이전 transition에서 랜덤하게 샘플링하여, training distribution을 완화시킨다.
+- 우리의 목표는 가능한 많은 게임을 플레이 할 수 있는 single player를 만드는 것이 목표이다.
+- 사람이 실제 세계에서 게임하듯이, 아무런 정보도 주지 않고 모델 스스로 게임을 플레이하게 했다.
+
+<Background>
+- each time-step별로 게임 내에서 취할 수 있는 액션을 취한다.
+- emulator의 internal state는 agent가 관찰하지 않고, agent는 오로지 emulator로부터 얻어지는 이미지만 관찰한다.
+- 게임 점수에 변화에 대한 보상값을 받는다.
+- game score는 전체 시퀀스에 대한 값이고, 이는 곧 액션에 대한 시퀀스는 time-step이 수천번 진행된 후에야 관찰 가능하다는 것을 말한다.
+- Agent는 현재 screen에 대한 것만 관찰할 수 있다.
+- 액션과 관찰된 값에 대한 시퀀스만 고려하여, 게임에 대한 전력을 학습하도록 한다.
+- 이와 같은 형식은 마르코프 과정을 보여준다.
+- agent의 목표는 emulator가 선택한 action에 대해서 상호 작용하여 reward를 최대치로 반환하는 것이다.
+- action-value function으로는 bellman equation을 따른다.
+- RL에서 가장 중요한 기본 개념은 action value-function을 추정하는 것인데, 이는 매 iteration 마다 bellman equation을 활용하여 update 된다.
+- 
+
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
