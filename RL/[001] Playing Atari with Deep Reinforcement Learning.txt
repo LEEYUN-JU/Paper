@@ -29,8 +29,45 @@
 - agent의 목표는 emulator가 선택한 action에 대해서 상호 작용하여 reward를 최대치로 반환하는 것이다.
 - action-value function으로는 bellman equation을 따른다.
 - RL에서 가장 중요한 기본 개념은 action value-function을 추정하는 것인데, 이는 매 iteration 마다 bellman equation을 활용하여 update 된다.
-- 
+- 이 알고리즘은 model-free알고리즘이며, emulator의 sample을 이용해서 learning을 한다.
+- off-policy 기반이며, state space에 대해서 충분한 탐험을 거친다.
 
+<Related Work>
+- 강화학습에서 가장 잘 알려진 것은 TD gammon이다.
+- TD gammon 은 강화학습 내에서 스스로 게이뫄고 사람만큼의 능력을 터득한 모델이다.
+- Q 러닝과 유사한 model free를 사용했으며, 한개의 hidden layer 와 multi layer perceptron을 사용했다.
+- Dice roll이 state space를 탐험하는데 영향을 주고, value function을 부드럽게 해주었다.
+- Non linear 한것이나, off-policy의 경우 q-learning을 더 다양하게 한다.
+- 최근에는 강화학습을 결합하여 사용하는 방법론이 많이 사용되고 있다.
+- Gradient temporal difference의 경우 q-learning 의 제한된 variant를 사용하는 learning control policy를 배우기 위해서 제안되었다.
+- 하지만 이러한 방법들은 non-linear control 에서는 아직 사용되지 않는다.
+- 아마 우리의 연구와 가장 유사한 모델은 nfq(neural fitted q-learning) 일 것이다.
+- Q-network의 파라미터를 업데이트 하기 위해서 RPROP알고리즘을 사용한다.
+- 하지만 매 이터레이션 마다 batch update 를 진행하기 때문에 데이터 셋이 큰 경우에는 연산량이 많아지게 된다.
+- Nfq는 real-world에서도 잘 작동하며, autoencoder를 사용하여 dimensional representation을 학습한다
+- 이와 대조되게, 우리는 end to end로 학습하고, 주어지는 입력값보다 agent가 더 낮은 차원을 가지고 있다.
+- Linear function approximation 과 generic visual feature 를 사용한 러닝 플랫폼을 사용한다.
+- Hyper neat도 atari 플랫폼에 적용되었는데, 신경망의 representing 전략을 위해서 사용되었다.
+- 반복적으로 agent를 학습 시키면서, 아타리 게임내에서 몇 가지 디자인적인 결함을 이용했다.
+
+<Deep Reinforcement Learning>
+- 최근 비전 분야외 스피치 분야에서 많은 데이터 셋을 기반으로 한 다양한 딥러닝 모델을 사용하고 있다.
+- 직접 손으로 만든 데이터 보다 가끔은 충분한 양의 데이터를 넣어주는 것이 더 좋은 결과를 보여주는경우가 있다.
+- stochastic gradient update를 통해 얻어진 데이터를 가지고 RGB이미지를 직접 학습시키는 알고리즘을 통해 강화학습을 사용하는 것이 우리의 목표이다.
+- TD-Gammon 아키텍처는 이러한 접근법에 대해서 처음에 시작점을 제공한다.
+- 경험적 value function을 기반으로 하고, on-policy한 환경에서 아키텍쳐를 업데이트 한다.
+- 이러한 접근법에 대한 결과가 상당히 좋다는 것이 알려진 뒤로, hard ware의 발전이나, 신경망의 발전은 RL의 발전을 자연스럽게 가져오게 되었다.
+- agent의 경험을 매 스텝마다 쌓아서 데이터로 만들고, 이를 ㄴreplay memory에 저장하는 테크닉은, experience reply라고 알려져 있으며, 이는 TD_Gammon, 유사한 다른 online 방법 과 대조적인 방법이다. 
+- inner loop 알고리즘 내에서 우리는 experience 에대한 샘플, 축적된 샘플들에 대한 Q-learning update를 진행했고, mini-batch 업데이트역시 같이 진행했다.
+- 전체적인 알고리즘을 우리는 deep Q-learning이라고 부르기로 했다.
+- 매 스텝마다 weight update를 하는데 사용되고, 이는 대용량 데이터를 처리하는데 매우 적합하다.
+- 샘플들 간의 강한 correlation에 의해서 sample로부터 직접적인 정보를 얻어서 학습하는것은 좋지 않다..
+- 샘플을 랜덤하게 하는것인 이러한 correlation을 방해하고, 이에 따라 업데이트 되는 분산을 줄여준다.
+- on-policy에 따라 다음 샘플을 결정한다..
+- local minimum 에 수렴하는 경우의 parameter를 관찰 가능하다는 장점이 있다..
+- experience replay에는 off-pollicy 가 필수 불가결하다.
+- 우리의 알고리즘은, n개의 experiments에서 마지막것만 메모리에 저장한다.
+- memory buffer문제가 어떻게 보면 이 모델의 한계점이라고 볼 수 있다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
@@ -41,4 +78,6 @@
 <참고한 블로그>
 
 <논문 요약>
+
+tried: 1.8, 1.6, 2.0.1,  
 
