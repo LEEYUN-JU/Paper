@@ -1,9 +1,15 @@
 <Abstract>
 - Bottom-up human pose의 경우 이미지 scale의 다양성에 의해 작은 사람들은 사람의 자세를 예측하기 어렵다.
 - HigherHRNet: high-resolution의 feature를 다양하게 학습하는 모델이다.
+- 이와 같은 방법은 특히나 이미지 내에서 작은 사람을 추출해내는데 도움이 된다.
+- HigherHRNet 은 COCO데이터 셋이나 Crowd Pose등에서 좋은 성과를 보여주었다.
 
 <Introduction>
-
+- 2D human pose estimation은 사람의 신체적 구조에 해당하는 키 포인트를 localizing하는 것이다.
+- 사람의 행동을 이해하는데 있어서, 해당 주제는 최근 몇년관 꽤 각광받아왔다.
+- 현재의 hpe는 top-down과 bottom-up으로 나누어졌다.
+- top-down의 경우, human-detector에 의존하는 경향이 짙고, 이는 single person을 찾는것을 용이하게 한다.
+- top-down 방식의 경우 추정하는 모든 사람들을 대부분 같은 사이즈로 normalization하는 것이 가능하고, 
 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
@@ -15,4 +21,3 @@
 <참고한 블로그>
 
 <논문 요약>
-
