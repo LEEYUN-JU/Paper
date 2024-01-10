@@ -8,9 +8,29 @@
 - 2D human pose estimation은 사람의 신체적 구조에 해당하는 키 포인트를 localizing하는 것이다.
 - 사람의 행동을 이해하는데 있어서, 해당 주제는 최근 몇년관 꽤 각광받아왔다.
 - 현재의 hpe는 top-down과 bottom-up으로 나누어졌다.
-- top-down의 경우, human-detector에 의존하는 경향이 짙고, 이는 single person을 찾는것을 용이하게 한다.
-- top-down 방식의 경우 추정하는 모든 사람들을 대부분 같은 사이즈로 normalization하는 것이 가능하고, 
+- top-down방법 중에, scale다양성을 고려하거나, 고해상도의 heatmap을 만듬으로써 성능을 높였다.
+- 단일 해상도만 사용하여 feature추출하고 grouping하는 방법을 기존의 bottom-up method에서 사용하였다.
+- PersonLab에서는 이를 해결하기 위해서 입력값을 고해상도 이미지를 사용했다.
+- 그랬더니 large person에 관한 정확도가 떨어지기 시작했다.
+- 이를 해결하기 위해서는, scale-aware heatmap 생성력을 높이는 것이 중요하다.
+- 따라서 본 논문에서는 Higher HRNet을 제안하고자 한다.
+- 기존 피라미드 모델들이 1/32 해상도에서 시작하는것과 달리, 본 모델은 1/4에서 시작하고, 이는 deconvolution layer를 통해서 얻는다.
+- CrowdPose dataset에 대해서 bottom-up method 중에 baseline을 제시하게 되었다. (?)
+- 이를 통해서 bottom-up method가 crowded scene에 대해서 advantage를 지니고 있다는 것을 확인할 수 있었다.
 
+- 우리의 contribution은 요약하자면 다음과 같다.
+- scale variation challenge를 하고자 했고, bottom-up 방식의 multi-person pose estimation을 하고자 했다.
+- HigherHRNet을 제안하고, 이는 pyramid 단계에서 multi-resolution supervision을 제안하고, 이는 고해상도 히트맵에서 small persons을 잘 예측 가능하도록 한다.
+- COCO 데이터 셋을 통해서 우리 모델의 성능을 검증했다.
+- crowded scene에 대해서 top-down 방법에 비해 훨씬 더 강건한 bottom-up 모델을  제안한다.
+
+<Related works>
+[Top-down methods]
+- bounding box 내에서 single person 자세를 추정하는 것임.
+- object detector에 의해서 생성되는게 bounding box임.
+
+[Bottom-up methods]
+- 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
@@ -19,5 +39,7 @@
 - 
 
 <참고한 블로그>
+
+구지?
 
 <논문 요약>
