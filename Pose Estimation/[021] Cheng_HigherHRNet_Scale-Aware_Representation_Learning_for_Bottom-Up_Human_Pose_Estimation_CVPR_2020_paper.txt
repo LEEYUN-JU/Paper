@@ -28,8 +28,24 @@
 [Top-down methods]
 - bounding box 내에서 single person 자세를 추정하는 것임.
 - object detector에 의해서 생성되는게 bounding box임.
+- Mask R-CNN은 직접적으로 Faster R-CNN 기반의 ROI Polling을 거친 특징들을 사용한다.
+- G-RMI는 top-down method를 두개의 step으로 나누어서 자세를 추정한다.
 
 [Bottom-up methods]
+- 전체 이미지에서 모든 key points를 찾고, 이를 grouping한다.,
+- OpenPose의 경우 two-branch multi-stage를 사용하고, 하나는 heatmap prediction을 다른 하나는 grouping method에 사용된다.
+- hourglass network에서는 heatmap prediction과 grouping을 동시에 가능하게 하는 것을 제안함.
+- embedding을 통해서 grouping하고, 각 key point들은 tag된 다음에 l_2 distance를 활용하여 key points 를 연결한다.
+- PersonLab은 ResNet을 활용하고, key points들을 직접 group 한다.
+
+[Feature pyramid]
+- feature pyramid는 최근 scale variation을 위해서 많이 사용되고 있다.
+- top-down method내에서 점진적인 해상도 복원을 통해 backbone에서 추출되는 feature들을 통합하였다.
+- 더 고해상도의 feature를 생성하고자 하는 것이 본 논문에서 하고자 하는 것임.
+
+[High resolution feature maps]
+- 고해상도의 feature map을 찾는데는 총 4가지 방법이 있다.
+- Encoder-Decoder, encoder부문에서 context information을 가져오고, decoder 부문에서 고해상도 feature를 가져온다.
 - 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
@@ -40,6 +56,5 @@
 
 <참고한 블로그>
 
-구지?
 
 <논문 요약>
