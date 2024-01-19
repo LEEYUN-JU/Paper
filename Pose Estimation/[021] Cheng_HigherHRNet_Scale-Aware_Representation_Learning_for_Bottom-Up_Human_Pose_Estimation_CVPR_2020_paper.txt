@@ -73,7 +73,14 @@
 - 이에 two resolution으로 구성된 feature pyramid가 생성되게 됩니다.
 - 더 높은 해상도가 요구되는 경우 추가적으로 deconvolution layer를 덧붙일 수 있습니다.
 - deconvolution layer는 person scale에 의존적임을 밝혀냈습니다.
-- small person일 수록  고해상도 이미지가 필요하며, 우리는 이를 deconvolution module을 붙여서 해결 가능하다는 것을 알아냈습니다.
+- small person일수록 고해상도 이미지가 필요하며, 우리는 이를 deconvolution module을 붙여서 해결 가능하다는 것을 알아냈습니다.
+- HRNet은 features와 predicted heatmap을 동시에 입력값으로 삼습니다.
+
+[Grouping]
+- groupping은 단순한 embedding을 사용하여 정확도를 올릴 수 있다.
+- 본 연구에서도 associative embedding을 사용하여 key point를 grouping하였다.
+- 그룹핑 프로세스는 동일한 식별 태그를 가진 키포인트를 작은 L2 거리를 가진 것끼리 묶어 개별적으로 그룹화합니다.
+
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
