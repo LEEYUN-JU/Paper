@@ -81,12 +81,64 @@
 - 본 연구에서도 associative embedding을 사용하여 key point를 grouping하였다.
 - 그룹핑 프로세스는 동일한 식별 태그를 가진 키포인트를 작은 L2 거리를 가진 것끼리 묶어 개별적으로 그룹화합니다.
 
+[Deconvolution Module]
+- simple deconvolution module, 입력 feature보다 해상도가 2배 높은 모듈을 제안한다.
+-  convolution layer  다음에는, Basic Residual Block을 붙였다.
+- heatmap을  concat했다는 conrtirbution울 가지고 있다.
+
+[Multi-Resolution Supervision]
+- scale variation을 handle할 수 있는 multi-resolution supervision을소개하고자 한다.
+- 각기 다른 해상도에서 ground truth를 생성 가능하도록 기존 ground truth를 transform 시켰다.
+- Gaussian kernel의 deviation이 중요한게 아니라는 사실을 발견했다.
+- 각기 다른 해상도의 feature pyramid는 각기 다른 sclae의 key point를 예측 가능하기 때문이다.
+- 고해상도 feature map에서는 small person을 정교하게 loacalization하기 위해서 상대적으로 작은 deviation이 필요하다.
+- loss는 heatmap의 MSE의 합을 사용한다.
+- 각기 다른 사이즈의 person을 각기 다른 level의 feature pyramid에 할당하지 않는다는 것을 강조할 필요가 있다.
+- 모델이 자동적으로 feature pyramid의 different levels 중에 특정 scale에 focus하는 능력이 있다는 것을 알아냈다.
+- 모든 해상도를 고려하는 대신에 가장 낮은 해상도만을 고려하여 tagmap을 예측한다.
+- 낮은 해상도에서 예측하는 것이 더 suitable하고, learning tagmap은 gloabl resoning을 요구하기 때문이다.
+- 높은 해상도가 tagmap을 예측하지 못할뿐더러 수렴도 하지 않는 다는 것을 발견하였다.
+- 따라서 입력 이미지의 1/4에 해당하는 feature map 을 사용한다.
+
+[Heatmap Aggregation for Inference]
+- heatmap aggregation strategy 를 제안하고자 한다.
+- bilinear interppolation은 모든 예측된 heatmap을 upsample하는데 사용된다. 
+- single scale 이나 single stage만 사용해왔던 기존 연구들과는 사뭇 다르다.
+- 이러한 방식을 취한 이유는 scale-aware한 pose estimation을 수행하기 위해서이다.
+- COCO dataset에서는 사람의 scale이 매우 다양하다.
+- Top-down method에서는 이러한 문제를 normalizing person regions 함으로써 해결하였다.
+- 하지만 bottom-up 방식에서는 모든 scale에서 key point를 찾아내야할 필요가 있다.
+- HigherHRNet이 다른 scale에서의 keypoints를 더 잘 capture한다.
+- 저해상도에서 포착하지 못한 small person에 대한 hetmap은 고해상도의 heatmap에서 복원될 수 있다.
+- 따라서, 통합하여 predict하는 것은 HigherHRNet을 더 scale-aware하게 한다.
+
+<Experiments>
+[Ablation Experiments]
+- Effect of deconvoluton module : 높은 해상도의 feature map 을 사용하는것이 더 결과가 좋음
+- Effect of feature concatenation : 큰 사람들의 성능은 감소, 중간 사이즈의 사람에 대해서는 성능이 올라감
+- Effect of heatmap aggregation : scale-aware하다는 것을 입증함
+- Effect of extra residual blocks : feature map을 더 refine할 수 잇으며, 중간 사이즈 큰 사이즈의 사람에 대해 AP가 증가한다.
+
+[Training with larger image size]
+- 한계가 존재한다.
+
+[Larger backbone]
+- backbone이 클수록 성능이 좋다.
+
+<Concolusion>
+- bottom-up multi-person pose estimation 분야에서, small person들의 자세를 추정하는것에 초점을 맞추고자 했다.
+- multi-scale image pyramid와 larger inputsize가 문제를 해결하였지만, high computational cost문제가 있었다.
+- 이를 해결하고자 HigherHRNet을 제안했고, 이는 multi-resolution heatmap aggregation을 수행한다. 
+- HigherHRNet은 다중 및 고해상도 히트맵을 효율적으로 생성 가능하다.
+- 존재하는 Bottom-up 방식중에 SOTA를 달성했고, small person에 대해서 특화적으로 잘 추정해 내는 것을 확인 할 수 있었다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
-- 
+ - 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
-- 
+- image scale에 대한 내용
+- large person이나 medium person에 대한 결과를 비교한것
+- ablation study진행한 방식
 
 <참고한 블로그>
 
