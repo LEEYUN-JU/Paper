@@ -1,0 +1,46 @@
+<Abstract>
+- 각 frame 을 독립적으로 추정하건, across frame을 통해 pose를 tracking하던 간에, HPE는 local information에 의존한다.
+- 본 논문에서는 local approach 와 global context를 결합 시키는 방법을 소개하고자 한다.
+- K-FPN을 사용하고, 이는 informative frame을 선택한 다음에, 전체 sequence에서 자세를 복원하고자 한다.
+- occlusion, motion blur, illumination changes, 등에 대해서도 robust하다.
+- Penn Action과 sub-JHMDB에서 SOTA를 달성햇다.
+- K-FPN net과 HPIM을 사용한다.
+
+<Introduction>
+- The new pipeline uses a light weighted key frame proposal network (K-FPN), 자세 추정에 모든 frame을 쓰는게 아니라 최소한의 frame만 선택하는 것
+- 본 논문의 main contribution중 하나는 unsupervised training을 위한 latent space에서의 recovery error를 기반으로 하는 loss function이다.
+- 남아있는 frame내에서 pose를 얻기 위해서  dynamics-based dictionary를 사용하는 Human Pose Interpolation Module(HPIM)이 second moudle의 주요한 pipeline이다.
+- important한 frame을 select하는 unsupervised, 하고 light한 모델이다.
+- 자세 추정시에 특정 key frame에서 추출된 정보를 활용한다.
+-  key-frame이 아닌 frame으로부터 자세를 추정한다
+- 수동으로 annotation되던 것들에 대한 수고를 덜 수 있다. (없던 frame 에서 추출하는 거라 원래는 사람이 정답을 만들어야 했기 때문인듯?)
+
+<Related Work>
+[Image Based Pose Estimation]
+- 기존의 방법들은 body parts와 hand-crafted feature에 의존해왔다.
+- [6]은 DCNNs을 parts of presence와 spatial relationships을 위한 conditional probabilities을 배우는데 사용했다.
+- [40]은 end-to-end 모델과 DCNN을 결합하였다.
+- [7]은 body joints의 correlation을 ImageNet pre-trained된것과 VGG-16 based모델을 통해 배웠다.
+- [35] 는 articulated pose estimation을 위해서 long-range dependencies하게 model을 만들었다.
+- [21] 는 서로 stacked된 feature들을 incorporate하기 위한 pathway를 opening했고, large pixel displacements를 handle하기 위한 architecture인 hourglass를 제안했다.
+- sufficient scaled feature는 연산량이 많다.
+- [42]는 teacher-student 구조를 제안함으로써, network complexity 를 줄이고, 연산 시간을 줄이고자 하였다.
+- 마지막으로 [4, 15, 22]는 사람의 body 구조를 이용하여 keypoints의 location을 재 정의했다.
+
+[Video Based Pose Estimation]
+- [27]은 additional convolutional layer가 spatial human layout을 더 simpler하게 배울 수 있도록 한다는 것을 보여주었다.
+- [20]은 image quaility degradation을 handle하기 위해서 sequenital geometric consistency를 도입했다.
+- RNN 기반의 모델은 높은 연산량을 요구한다.
+- [23]은 이러한 문제를 해결하기 위해서 online distill pose kernel을 제안했다.
+
+
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
