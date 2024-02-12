@@ -1,0 +1,19 @@
+<Abstract>
+- vide pose estimation 을 위한 simple baseline을 제시하는것이 본 논문의 목적
+- sample frame만 보고 simple-denoise-recover이 가능한 모델이며, human motion이 continuous하다는 것과, light weight pose representation의 장점을 취한 구조임.
+- Transformer-based network를 사용한 것보다 효과가 좋으며, 전체 비디오의 10%만 sample로 취한다.
+
+<Introduction>
+- 
+
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
