@@ -4,6 +4,36 @@
 - Transformer-based network를 사용한 것보다 효과가 좋으며, 전체 비디오의 10%만 sample로 취한다.
 
 <Introduction>
+- Pose Estimation은 사용되는 곳이 많은 것에 비해 computational cost가 상당하다.
+- 비디오에서 자세를 추정하는 경우, 필연적으로 frame-by-frame에 의한 sub-optimal solution을 요구하게 된다.
+- 비디오 내에서 모든 frame을 보지 않고도 자세를 추정하기 위해서 우리는 novel framework를 제안한다.
+- video 내에서 드물게 보이는 장면이나 occlusion으로 인해 pose를 추정하는 것은 여전히 의문이 많다.
+- contribution
+- 1) 우리가 알기로는 video를 쪼개서 자세를 추정하고자 하는 것이 첫 시도이다
+- 정확도는 무려 10%나 상승했고, 존재하는 다른 모델들보다 훨씬 smooth하다.
+- 2) RecoverNet이라는 모데과 DenoiseNet을 참고하여 lightweight하는 것이 가능했다.
+- DeciWatch는 검증되었다, 세 가지 human pose estimation에 대해, body recovery task, efficient labeling.
+
+<Related work>
+[Efficient Human Pose Estimation]
+- image based의 pose estimation과 video based의 pose estimation이 있다.
+- image base의 경우, 효율적인 network를 만드는 것이 관건이다.
+- 연속 프레임 간의 상호 의존성을 활용하여, 불필요한 계산을 줄임
+- DKD 포즈 knowledge를 온라인으로 추출하기 위해 경량 증류기 도입
+- KFP는 인접 프레임 로컬 정보 사용, 전체 시퀀스 추정 후, 정보용 키 프레임 선택, 전체 시퀀스 복구
+- MAPN 저장된 잔여 정보를 활용하고, 잔여 프레임은 dynamic gate에 의해 계산됨
+- 앞서 제안된 방법들은, 연산 비용을 줄였지만, key frame이 아닌 frame들을 전부 무시해 버리기 때문에 정확도 향상에 한계가 존재한다는 단점이 있다
+- intermediate representation은 오히려 calculation을 무겁게 한다.
+
+[Motion Completion]
+- 모션 완성은 computer graphics나 data completion을 위한 motion capture를 포함한다.
+- 모션 캡쳐에서는 기술적인 한계와 마커의 가려짐으로 인한 포인트나 시퀀스 누락이 자주 발생한다.
+- linear, Cubic Spline, Lagrange 및 Newton의 다항식 보간, 낮은 순위 행렬 완성 등을 통해 접근하고자 했다.
+- Motion in-filling은 absent 포즈를 완성하는것을 목표로 한다.
+- 단순 행봉이 반복되는 frame내에서 자세를 완성하는 것을 목표로 한다.
+-  capture된 행동이 너무 복잡하면 실패할 수 있다.
+
+<Method>
 - 
 
 
