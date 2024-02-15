@@ -34,14 +34,46 @@
 -  capture된 행동이 너무 복잡하면 실패할 수 있다.
 
 <Method>
-- 
+[Problem Definition and Overview]
+- 정답 포즈와 예측 포즈간의 거리를 최소한으로 하는 것을 목표로 한다.
+- 정확도 하락 없이 효율적인 video-based pose estimation의 baseline을 set하는 것을 target으로 한다.
+- sample frame에서 whole pose를 예측하기 위해서는 sample pose의 quality가 중요하다.
+- 해당 연구에서는 pose를 추출하는 Denoise Net과, 포즈를 복원하는 Recover Net을 사용한다.
+- 위와 같은 방법을 채택함으로써, 연산량을 줄이고 small frame만 보는 것이 가능해졌다.
 
+[Getting Sampled Poses]
+- 몇 개의 sample frame을 취한다음 그 안에서 sample 자세를 추정한다..
+
+[Denoising the Sampled Poses]
+- sparse pose는 motion recovery에 있어서 매우 중요하다.
+- Denoise Net은 두 갈래로 나누어 진다. 1) dynamic model for handling diverse possible pose nosises. 2) to capture useful Spatio-temporal information
+- 이러한 두 개의 조건에 의해 local operation, 즉 convolutional or reccurent network는 적합하지 않다.
+- Transformer-based model들은 global correlation among discrete tokens에 적합하다.
+- 따라서 transformer-based encoder모듈을 사용한다.
+- 다른 linear projection matrix를 사용한다.
+
+[Recovering the Sampled Poses]
+- consistent temporal correlation을 learn하기 위해서 simple temporal upsampling a linear transformation을 사용한다.
+- recovery 를 realistic 하고 accurate하기 위해서, 다른 transformer based network 를 사용한다.
+- Recover Net역시 Transformer를 사용하고, M multi-head self-attention block을 사용한다.
+
+[Efficiency calculation]
+- DeciWatch 의 computational costs는 세 가지 파트에 의거한다
+- 1) sampled pose를 estimate하는 것
+- 2) Denoise Net을 사용해서 clean sampled pose 를 얻는 것
+- 3) Recover Net을 사용해서 complete pose sequence하는 것
+- 아주 적은 frame을 sample 로 하기 때문에 FLOPs이 1/N 만큼 감소하게 되고, 이로 인해 10X speed up 하게 된다.
+
+[Loss Function]
+- L1 regression loss를 적용한다.
+- noisy patterns from sampled estimated poses를 알기 위해서 L1 loss를 적용해 준다.
+- lamda는 RecoverNet과 DenoiseNet 의 balance를 취하기 위해서 사용하고, 여기서는 5로 지정해 주었다.
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
-- 
+- 수식 같은걸 잘 정리해 놓은것 같다? 나중에 수식 적을때 참고해도 좋을 까?
 
 <참고한 블로그>
 
