@@ -1,0 +1,54 @@
+<Abstract>
+- 자세 추정은 많은 downstream image processing task에 사용된다.
+- illustration에 관해서는 연구가 별로 없고, 대부분의 데이터 셋이 real dataset 을 사용한다.
+- 이에 transfer learning을 통해 domain이 서로 다른 (사진과 그림) pose estimation을 가능하게 한다.
+- 새로운 데이터 셋을 제시한다.
+- SOTA 달성했댜
+
+<Introduction>
+- 기존에 연구되었던 illustartion을 가지고 pose estimation하는 경우에 synthetic dataest을 가지고 진행하고, Image Net을 backbone으로 사용하는 것에 지나치게 의존적이었다.
+- 게다가 사용되었던 데이터 셋이 variation하지 않고, missing keypoints가 있었고, bounding box를 요구했다.
+- 우리는 2D keypoint detecotor with SOTA performance 를 구성했다.
+- novel illustration retrieval system을 통해 효과를 입증했다.
+- SOTA pose estimator 이고, 두 개의 domain 으로부터 학습한다.
+- 캐릭터 일러스트레이션 자세 추정을 위한 새로운 pose estimator를 제안한다.
+- 다양한 자세를 위한 데이터 셋을 구성했다.
+
+<Related Work>
+[The Illustartion Domain]
+- 캐리커쳐나 만화에 대한 시도는 있었지만, 우리는 anime/manga-style drawing에 집중하고자 한다.
+- lineart cleaning, sketch extraction, 과 같은 문제들이 있다.
+- 기존의 모델들은 적은 데이터 셋으로 학습하였다.
+- 우리는 cleaner tag classification task, segmentation dataset, upgrade된 COCO keypoint dataset을 제안하고자 한다.
+
+[Transfer Learning & Domain Adaptation]
+- 상당수의 데이터 셋이 target에 의존하는 것보다 source에 의존한다.
+- 대부분 source데이터 셋으로 train 하고 target데이터 셋에 맞추어서 fine-tuning을 진행 한다.
+- source data와 target데이터 셋이 유사하다면 좋은 성능을 낼 수 있다.
+- 이는 추출된 특징의 통계적 특성을 일치시키거나, 도메인간 입력을 변환하여 얻을 수 있다.
+
+[Pose Estimation]
+- naive baseline 은 Mask R-CNN임
+- NMS, RMPE, OpenPose
+
+[Pose Estimation Transfer]
+- transfer learning in pose estimation은 natural images에서 synthetically-rendered data를 쓴다.
+- 우리의 연구와 가장 비슷한것은 MikuMikuDance (MMD) 를 사용한 연구이지만 public dataset이 아니다.
+- 이와 유사한 데이터 셋인 Anime Drawings Dataset(ADD) 를 수집했다.
+
+<Method & Architectures>
+- feature concatenation and feature matching 을 위한 pose estimator를 제안한다.
+
+[Pose Estimation Transfer Model]
+- 
+
+<새롭게 알게 된 용어 & 다시 정리하는 용어>
+- 
+
+<나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 
+
+<참고한 블로그>
+
+<논문 요약>
+
