@@ -40,6 +40,32 @@
 - feature concatenation and feature matching 을 위한 pose estimator를 제안한다.
 
 [Pose Estimation Transfer Model]
+- feature concatenation, and feature matching 을 제안한다.
+- we focus on combining source features to predict keypoints 
+- we chose Mask R-CNN as it showed signiﬁcantly better out-of-the-box generalization to illustrations than OpenPose 
+- In order to perform the concatenation, it learns shallow feature converters for each source to decrease the feature channel count and allow bilinear sampling to a common higher resolution. 
+- The combined features are fed to the head, consisting of a shallow converter and two ResNet blocks.
+- 최종 output은 총 25개의 heatmap(17개의 COCO, 8개의 midpoints)
+- pixel-wise binary across-entropy loss on each heatmap
+- we simultaneously train an additional matching network that predicts features from the expensive task-speciﬁc model using features from the domain-speciﬁc model.
+- Mask R-CNN을 training하긴 했지만, 추론 과정에서 사용되지는 않았다
+- 단조로운 구조임에도 불구하고 좋은 성능을 보여주었다
+
+[ResNet Tagger]
+- ResNet50 ﬁne-tuned as an illustration tagger를 backbone으로 사용했다
+- tagging task는 multi-label classification과 동등하다
+- Danbooru ﬁne-tuning signiﬁcantly boosts transfer performance
+- 더 명시적이고 중복되지 않는 클래스를 정의하는 태그 그룹의 규칙서를 수작업으로 개발했습니다(ex: 머리에 손을 댄다, 정리한다, 넣는다 가 같은 의미로 사용되지만 tagging이 달라서 서로 다르게 classification 되어 버림 이를 해결하고자 했다는 내용)
+- 덜 빈전한 클래스의 학습을 강조하도록 함
+
+[Character Segmentation  &  Bounding  Boxes]
+- DeepLabv3를 기반으로 한다
+- 더 정교한 segmentation을 위해 head끝에 세 개의 레이어를 추가함
+- 전체 모델 fine-tuning
+
+<Data Collection>
+- we  train  with  random  image rotation,  translation, scaling,  ﬂipping, and  recoloring
+- AnimeDrawingsDataset (ADD) 사용함
 - 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
@@ -51,4 +77,6 @@
 <참고한 블로그>
 
 <논문 요약>
+- feature를 추출하는 모델이 두 개 있고, 추출된 feature를 concate하게 된다
+- 
 
