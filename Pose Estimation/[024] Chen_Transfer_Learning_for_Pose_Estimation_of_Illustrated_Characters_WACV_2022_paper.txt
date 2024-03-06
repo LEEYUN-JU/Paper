@@ -66,17 +66,40 @@
 <Data Collection>
 - we  train  with  random  image rotation,  translation, scaling,  ﬂipping, and  recoloring
 - AnimeDrawingsDataset (ADD) 사용함
+- 샘플 추가해서 자세 다양성 증가시킴.
+- 잘못되었다고 생각되는 데이터를 제거하여 클래스 불균형 감소
+
+<Character Segmentation Data>
+- 캐릭터 bounding box를 얻기 위해서 seg 모델 훈련
+- AniSeg의 데이터셋의 약 20배가 되는 데이터 셋을 생성
+
+[Experiments]
+- 
+
+[Poose Estimation Transfer]
+- Task Fine-tuning Only : 사전 훈련된 Mask R-CNN 헤드를 백본 고정 및 미세 조정
+- Domain Features Only : 고정된 ResNet 50 backbone에 키포인트 헤드 추가 > 보편적인 전이 학습을 위함
+- Task Fine-tuning w/Domain Features : 새로운 도메인 특성 적용
+- Adversarial (DeepFashion2) : 
+
+[ResNet Tagger Backbone]
+- 우리의 Tagger가 더 좋은 성능을 보인다~
+
+<Character Segmentation & Bounding Boxes>
 - 
 
 <새롭게 알게 된 용어 & 다시 정리하는 용어>
 - 
 
 <나중에 시도해 볼만한 것들 & 논문 뒷받침 참고가 될만한 내용>
+- 데이터 셋을 분석해서 자세 추정에 필요하다고 생각되는 데이터 셋을 증가시킴
+- All data and code will be released upon publication.
+- PCK 말고 Percentage of Detected Joints(PDJ) 사용하기
 - 
 
 <참고한 블로그>
 
 <논문 요약>
 - feature를 추출하는 모델이 두 개 있고, 추출된 feature를 concate하게 된다
-- 
+- 자세의 다양성을 위해서 데이터를 증강시키고, segmenter를 발전 시켰지만, 결론적으로 Animation 캐릭터는 실제와 비율도 다르고, 색감도 다르기 때문에 연구에는 그닥... 
 
